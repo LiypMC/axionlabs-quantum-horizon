@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Input } from "@/components/ui/input";
 import { Atom } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface NotifyButtonProps {
   variant?: "outline" | "filled";
@@ -14,19 +15,54 @@ interface NotifyButtonProps {
 export default function NotifyButton({ variant = "outline", className = "" }: NotifyButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!email) {
       toast.error("Please enter your email");
       return;
     }
     
-    toast.success("Thanks! We'll notify you when we launch", {
-      description: "You've been added to our waiting list"
-    });
-    setEmail("");
-    setIsOpen(false);
+    // Simple email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      // Store email in Supabase
+      const { error } = await supabase
+        .from('notification_signups')
+        .insert({ email });
+        
+      if (error) {
+        if (error.code === '23505') { // Unique violation code
+          toast.info("You're already on our list!", {
+            description: "We'll notify you when we launch"
+          });
+        } else {
+          console.error("Error saving email:", error);
+          toast.error("Something went wrong. Please try again.");
+        }
+      } else {
+        toast.success("Thanks! We'll notify you when we launch", {
+          description: "You've been added to our waiting list"
+        });
+      }
+      
+      setEmail("");
+      setIsOpen(false);
+    } catch (err) {
+      console.error("Error in handleSubmit:", err);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   const buttonClasses = variant === "outline" 
@@ -62,13 +98,15 @@ export default function NotifyButton({ variant = "outline", className = "" }: No
                 className="bg-white/5 border-white/10 text-axion-white"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
             </div>
             <Button 
               type="submit" 
               className="w-full glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
+              disabled={isLoading}
             >
-              Notify Me When We Launch
+              {isLoading ? "Submitting..." : "Notify Me When We Launch"}
             </Button>
           </form>
         </DialogContent>

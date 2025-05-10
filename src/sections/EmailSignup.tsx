@@ -3,21 +3,57 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function EmailSignup() {
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!email) {
       toast.error("Please enter your email");
       return;
     }
     
-    toast.success("Thanks for signing up!", {
-      description: "You've been added to our waiting list"
-    });
-    setEmail("");
+    // Simple email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      // Store email in Supabase
+      const { error } = await supabase
+        .from('notification_signups')
+        .insert({ email });
+        
+      if (error) {
+        if (error.code === '23505') { // Unique violation code
+          toast.info("You're already on our list!", {
+            description: "We'll notify you when we launch"
+          });
+        } else {
+          console.error("Error saving email:", error);
+          toast.error("Something went wrong. Please try again.");
+        }
+      } else {
+        toast.success("Thanks for signing up!", {
+          description: "You've been added to our waiting list"
+        });
+      }
+      
+      setEmail("");
+    } catch (err) {
+      console.error("Error in handleSubmit:", err);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -36,12 +72,14 @@ export default function EmailSignup() {
               className="bg-white/5 border-white/10 text-axion-white"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
             />
             <Button 
               type="submit" 
               className="glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow whitespace-nowrap"
+              disabled={isLoading}
             >
-              Notify Me
+              {isLoading ? "Submitting..." : "Notify Me"}
             </Button>
           </form>
         </div>
