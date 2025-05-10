@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
+import { triggerPulseAnimation, createParticleExplosion } from "@/lib/animations";
 
 interface ThemeToggleProps {
   className?: string;
@@ -10,12 +11,21 @@ interface ThemeToggleProps {
 export function ThemeToggle({ className }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme();
 
+  const handleThemeChange = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    triggerPulseAnimation(newTheme);
+    
+    // Create particle explosion at the click position
+    createParticleExplosion(event.clientX, event.clientY);
+  };
+
   return (
     <Button
       variant="outline"
       size="icon"
       className={`rounded-full theme-transition ${className || ""}`}
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={handleThemeChange}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
       <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

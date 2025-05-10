@@ -2,6 +2,7 @@
 import NotifyButton from "@/components/NotifyButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
+import AnimatedBackground from "@/components/AnimatedBackground";
 
 export default function Hero() {
   const { theme } = useTheme();
@@ -11,7 +12,7 @@ export default function Hero() {
   
   return (
     <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative theme-transition">
-      <div className="absolute inset-0 bg-radial pointer-events-none" />
+      <AnimatedBackground />
       
       <header className="w-full absolute top-0 left-0 right-0 flex justify-between items-center p-4 md:p-6 z-10 theme-transition">
         <div className="flex items-center">
