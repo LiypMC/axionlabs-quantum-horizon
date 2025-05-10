@@ -1,13 +1,20 @@
 
+import { useTheme } from "@/components/ThemeProvider";
+
 export default function Footer() {
+  const { theme } = useTheme();
+  const logoSrc = theme === "dark" 
+    ? "/lovable-uploads/0785e971-63b4-4ed9-81b0-936bc447673d.png"
+    : "/lovable-uploads/d903c226-cab4-4b0d-a97d-8f198c048300.png";
+
   return (
-    <footer className="py-10 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+    <footer className="py-10 px-4 sm:px-6 lg:px-8 border-t border-border theme-transition">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
         <div className="mb-4 md:mb-0">
           <img
-            src="/lovable-uploads/d903c226-cab4-4b0d-a97d-8f198c048300.png"
+            src={logoSrc}
             alt="AxionLabs Logo"
-            className="h-10"
+            className="h-10 theme-transition"
           />
         </div>
         
@@ -20,7 +27,7 @@ export default function Footer() {
             <a
               key={item.name}
               href="#"
-              className="text-axion-gray hover:text-axion-blue transition-colors"
+              className="text-foreground/60 hover:text-axion-blue transition-colors"
               aria-label={item.name}
             >
               <svg
@@ -40,7 +47,7 @@ export default function Footer() {
           ))}
         </div>
         
-        <div className="mt-4 md:mt-0 text-sm text-axion-gray">
+        <div className="mt-4 md:mt-0 text-sm text-foreground/60">
           © 2025 AxionLabs. All rights reserved.
         </div>
       </div>

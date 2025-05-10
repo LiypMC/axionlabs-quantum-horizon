@@ -1,20 +1,28 @@
 
 import NotifyButton from "@/components/NotifyButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function Hero() {
+  const { theme } = useTheme();
+  const logoSrc = theme === "dark" 
+    ? "/lovable-uploads/0785e971-63b4-4ed9-81b0-936bc447673d.png"
+    : "/lovable-uploads/d903c226-cab4-4b0d-a97d-8f198c048300.png";
+  
   return (
-    <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative">
+    <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative theme-transition">
       <div className="absolute inset-0 bg-radial pointer-events-none" />
       
       <header className="w-full absolute top-0 left-0 right-0 flex justify-between items-center p-4 md:p-6 z-10">
         <div className="flex items-center">
           <img
-            src="/lovable-uploads/d903c226-cab4-4b0d-a97d-8f198c048300.png"
+            src={logoSrc}
             alt="AxionLabs Logo"
-            className="h-12 md:h-16"
+            className="h-12 md:h-16 theme-transition"
           />
         </div>
-        <div>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
           <NotifyButton variant="outline" />
         </div>
       </header>
@@ -37,7 +45,7 @@ export default function Hero() {
       <div className="absolute bottom-10 left-0 right-0 flex justify-center">
         <a 
           href="#mission" 
-          className="text-axion-blue hover:text-axion-white transition-colors animate-bounce"
+          className="text-axion-blue hover:text-foreground transition-colors animate-bounce"
           aria-label="Scroll down"
         >
           <svg 
