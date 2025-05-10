@@ -8,7 +8,7 @@ import Footer from "@/sections/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-axion-black overflow-x-hidden">
+    <div className="min-h-screen theme-transition">
       <Hero />
       <Mission />
       <Showcase />

@@ -9,7 +9,7 @@ export default function Footer() {
 
   return (
     <footer className="py-10 px-4 sm:px-6 lg:px-8 border-t border-border theme-transition">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center theme-transition">
         <div className="mb-4 md:mb-0">
           <img
             src={logoSrc}
@@ -27,7 +27,7 @@ export default function Footer() {
             <a
               key={item.name}
               href="#"
-              className="text-foreground/60 hover:text-axion-blue transition-colors"
+              className="text-foreground/60 hover:text-axion-blue transition-colors theme-transition"
               aria-label={item.name}
             >
               <svg
@@ -47,7 +47,7 @@ export default function Footer() {
           ))}
         </div>
         
-        <div className="mt-4 md:mt-0 text-sm text-foreground/60">
+        <div className="mt-4 md:mt-0 text-sm text-foreground/60 theme-text-transition">
           © 2025 AxionLabs. All rights reserved.
         </div>
       </div>

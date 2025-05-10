@@ -13,7 +13,7 @@ export default function Hero() {
     <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative theme-transition">
       <div className="absolute inset-0 bg-radial pointer-events-none" />
       
-      <header className="w-full absolute top-0 left-0 right-0 flex justify-between items-center p-4 md:p-6 z-10">
+      <header className="w-full absolute top-0 left-0 right-0 flex justify-between items-center p-4 md:p-6 z-10 theme-transition">
         <div className="flex items-center">
           <img
             src={logoSrc}
@@ -28,12 +28,12 @@ export default function Hero() {
       </header>
       
       <div className="text-center max-w-4xl mx-auto z-10 space-y-8">
-        <h1 className="heading text-4xl md:text-6xl lg:text-7xl tracking-wide">
+        <h1 className="heading text-4xl md:text-6xl lg:text-7xl tracking-wide theme-text-transition">
           <span className="block">AxionLabs</span>
           <span className="block text-2xl md:text-3xl lg:text-4xl mt-2 text-axion-blue">Pioneering Quantum Frontiers</span>
         </h1>
         
-        <p className="text-axion-gray text-lg md:text-xl max-w-2xl mx-auto">
+        <p className="text-axion-gray text-lg md:text-xl max-w-2xl mx-auto theme-text-transition">
           Coming Soon: The Next Generation of Particle Accelerators, AI-Driven Devices & Interstellar Research
         </p>
         
