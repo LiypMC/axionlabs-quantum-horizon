@@ -1,8 +1,8 @@
 
-import * as animeJs from 'animejs';
+import anime from 'animejs/lib/anime.es.js';
 
 export const triggerPulseAnimation = (theme: string) => {
-  animeJs.default({
+  anime({
     targets: '.animated-background-pulse',
     scale: [1, 1.3, 1],
     opacity: [1, 0.8, 1],
@@ -12,12 +12,12 @@ export const triggerPulseAnimation = (theme: string) => {
   
   const color = theme === 'dark' ? '#0066cc' : '#007ACC';
   
-  animeJs.default({
+  anime({
     targets: '.theme-transition-particle',
     backgroundColor: color,
     scale: [1, 1.5, 1],
     easing: 'easeInOutQuad',
-    delay: animeJs.default.stagger(100),
+    delay: anime.stagger(100),
     duration: 700
   });
 };
@@ -56,7 +56,7 @@ export const createParticleExplosion = (x: number, y: number, count = 20) => {
     
     container.appendChild(particle);
     
-    animeJs.default({
+    anime({
       targets: particle,
       translateX: Math.random() * 200 - 100,
       translateY: Math.random() * 200 - 100,
