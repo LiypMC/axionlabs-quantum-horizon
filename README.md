@@ -1,73 +1,61 @@
-# Welcome to your Lovable project
-
-## Project info
-
-**URL**: https://lovable.dev/projects/6d5ef5e4-80d5-4d01-9749-5efc726c1cbd
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/6d5ef5e4-80d5-4d01-9749-5efc726c1cbd) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
 ```
+# Axions Lab Quantum Horizon
 
-**Edit a file directly in GitHub**
+![Axions Lab Logo](https://axionslab.com/assets/images/logo.png)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## About Axions Lab
 
-**Use GitHub Codespaces**
+Axions Lab is a pioneering quantum computing research organization dedicated to advancing the frontier of quantum technology. Our mission is to develop practical quantum computing solutions that address complex computational challenges across industries. Founded by a team of quantum physicists and computer scientists, we bridge the gap between theoretical quantum mechanics and real-world applications.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Quantum Horizon Platform
 
-## What technologies are used for this project?
+Quantum Horizon is our flagship quantum computing framework designed to accelerate research, development, and deployment of quantum algorithms. Our platform integrates cutting-edge quantum simulation tools with intuitive interfaces, allowing researchers and developers to explore quantum computing applications without extensive specialized knowledge.
 
-This project is built with:
+## Our Vision
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+We envision a future where quantum computing transforms how we solve the world's most pressing computational problems. From drug discovery to climate modeling, financial optimization to materials science, our goal is to harness the power of quantum mechanics to enable breakthrough discoveries and innovations.
 
-## How can I deploy this project?
+## Key Technologies
 
-Simply open [Lovable](https://lovable.dev/projects/6d5ef5e4-80d5-4d01-9749-5efc726c1cbd) and click on Share -> Publish.
+- Advanced quantum circuit simulation environment
+- Comprehensive library of quantum algorithms
+- Integration with popular quantum computing frameworks
+- Interactive visualization tools for quantum states and operations
+- Benchmarking suite for algorithm performance evaluation
+- Cloud-based quantum computing resources
+- Quantum machine learning frameworks
 
-## Can I connect a custom domain to my Lovable project?
+## Research Areas
 
-Yes, you can!
+- Quantum algorithm development
+- Quantum error correction and fault tolerance
+- Quantum machine learning
+- Quantum chemistry simulations
+- Financial modeling with quantum computing
+- Quantum cryptography and security
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Documentation
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Comprehensive documentation is available at [docs.axionslab.com](https://docs.axionslab.com) or in the `/docs` directory of this repository.
+
+## Roadmap
+
+- Q3 2025: Enhanced quantum machine learning capabilities
+- Q4 2025: Integration with additional quantum hardware providers
+- Q1 2026: Advanced quantum error correction implementations
+- Q2 2026: Quantum advantage demonstration for select applications
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+- Website: [axionslab.com](https://axionslab.com)
+- Email: [contact@axionslab.com](mailto:contact@axionslab.com)
+- Twitter: [@AxionsLab](https://twitter.com/AxionsLab)
+
+---
+
+© 2025 Axions Lab. All Rights Reserved.
+```
