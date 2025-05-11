@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import FloatingCube from "@/components/FloatingCube";
 
 export default function EmailSignup() {
   const [email, setEmail] = useState("");
@@ -60,28 +61,36 @@ export default function EmailSignup() {
     <section id="signup" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="glass-panel p-6 md:p-10 text-center animate-fade-in">
-          <h2 className="heading text-3xl md:text-4xl mb-4">Be the First to Witness the Future</h2>
-          <p className="text-axion-gray mb-8">
-            Join our insider list for launch updates, research briefs, and VIP access.
-          </p>
-          
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              className="bg-white/5 border-white/10 text-axion-white"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
-            />
-            <Button 
-              type="submit" 
-              className="glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow whitespace-nowrap"
-              disabled={isLoading}
-            >
-              {isLoading ? "Submitting..." : "Notify Me"}
-            </Button>
-          </form>
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h2 className="heading text-3xl md:text-4xl mb-4">Be the First to Witness the Future</h2>
+              <p className="text-axion-gray mb-8">
+                Join our insider list for launch updates, research briefs, and VIP access.
+              </p>
+              
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="bg-white/5 border-white/10 text-axion-white"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                />
+                <Button 
+                  type="submit" 
+                  className="glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Submitting..." : "Notify Me"}
+                </Button>
+              </form>
+            </div>
+            
+            <div className="hidden md:block">
+              <FloatingCube />
+            </div>
+          </div>
         </div>
       </div>
     </section>

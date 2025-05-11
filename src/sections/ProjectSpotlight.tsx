@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import RotatingGlobe from "@/components/RotatingGlobe";
 
 export default function ProjectSpotlight() {
   return (
@@ -15,21 +16,29 @@ export default function ProjectSpotlight() {
             </p>
           </div>
           
-          <div className="my-10 max-w-3xl mx-auto">
-            <div className="h-4 bg-white/10 rounded-full overflow-hidden">
-              <div className="h-full bg-axion-blue progress-bar-animation rounded-full" 
-                   style={{ width: "65%" }} />
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="order-2 md:order-1">
+              <div className="my-10">
+                <div className="h-4 bg-white/10 rounded-full overflow-hidden">
+                  <div className="h-full bg-axion-blue progress-bar-animation rounded-full" 
+                      style={{ width: "65%" }} />
+                </div>
+                <div className="mt-2 flex justify-between text-sm text-axion-gray">
+                  <span>Development</span>
+                  <span>65% Complete</span>
+                </div>
+              </div>
+              
+              <div className="mt-8 flex justify-center md:justify-start">
+                <Button className="glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow">
+                  Learn More
+                </Button>
+              </div>
             </div>
-            <div className="mt-2 flex justify-between text-sm text-axion-gray">
-              <span>Development</span>
-              <span>65% Complete</span>
+            
+            <div className="order-1 md:order-2">
+              <RotatingGlobe />
             </div>
-          </div>
-          
-          <div className="text-center mt-8">
-            <Button className="glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow">
-              Learn More
-            </Button>
           </div>
         </div>
       </div>
