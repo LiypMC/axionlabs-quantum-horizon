@@ -1,16 +1,20 @@
 
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import Hero from "@/sections/Hero";
 import Mission from "@/sections/Mission";
 import Showcase from "@/sections/Showcase";
 import ProjectSpotlight from "@/sections/ProjectSpotlight";
 import EmailSignup from "@/sections/EmailSignup";
 import Footer from "@/sections/Footer";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/components/ThemeProvider";
+import { Button } from "@/components/ui/button";
 import { triggerPulseAnimation, createParticleExplosion } from "@/lib/animations";
 
 const Index = () => {
   const { theme, setTheme } = useTheme();
+  const { isAuthenticated, signOut } = useAuth();
   
   // Handle key press for theme toggle
   useEffect(() => {
@@ -35,6 +39,37 @@ const Index = () => {
   
   return (
     <div className="min-h-screen theme-transition animated-background-pulse">
+      {/* Auth Navigation */}
+      <div className="absolute top-4 right-4 z-50 flex gap-2">
+        {isAuthenticated ? (
+          <>
+            <Button 
+              as={Link} 
+              to="/settings"
+              variant="outline"
+              className="glass-panel border-axion-blue/30 text-axion-white hover:bg-axion-blue/10"
+            >
+              Profile
+            </Button>
+            <Button 
+              onClick={signOut}
+              variant="outline"
+              className="glass-panel border-axion-blue/30 text-axion-white hover:bg-axion-blue/10"
+            >
+              Sign Out
+            </Button>
+          </>
+        ) : (
+          <Button 
+            as={Link} 
+            to="/auth"
+            className="glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
+          >
+            Sign In
+          </Button>
+        )}
+      </div>
+
       <Hero />
       <Mission />
       <Showcase />
