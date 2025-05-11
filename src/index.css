@@ -139,3 +139,33 @@
 .theme-border-transition {
   transition: border-color 0.3s ease;
 }
+
+/* New animations to replace anime.js */
+@keyframes pulse-animation {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.pulse-animation {
+  animation: pulse-animation 1s ease-in-out;
+}
+
+@keyframes particle-animation {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+  100% { transform: scale(1); }
+}
+
+.particle-animation {
+  animation: particle-animation 0.7s ease-in-out;
+}
+
+@keyframes particle-explosion {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--x, 0), var(--y, 0)) scale(0); }
+}
+
+.particle-explosion {
+  animation: particle-explosion 1.5s ease-out forwards;
+}

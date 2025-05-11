@@ -1,7 +1,6 @@
 
 import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
-import anime from 'animejs';
 import { useTheme } from './ThemeProvider';
 
 interface AnimatedBackgroundProps {
@@ -81,13 +80,9 @@ const AnimatedBackground = ({ className }: AnimatedBackgroundProps) => {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
       
-      anime({
-        targets: mouseTarget,
-        x: mouse.x,
-        y: mouse.y,
-        duration: 2000,
-        easing: 'easeOutQuad'
-      });
+      // Smoothly update the target
+      mouseTarget.x = mouse.x;
+      mouseTarget.y = mouse.y;
     };
     
     window.addEventListener('mousemove', handleMouseMove);
