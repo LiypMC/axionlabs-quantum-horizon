@@ -1,7 +1,7 @@
 
 import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
-import anime from 'animejs';
+import * as animeJs from 'animejs';
 import { useTheme } from './ThemeProvider';
 
 interface AnimatedBackgroundProps {
@@ -81,7 +81,7 @@ const AnimatedBackground = ({ className }: AnimatedBackgroundProps) => {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
       
-      anime({
+      animeJs.default({
         targets: mouseTarget,
         x: mouse.x,
         y: mouse.y,
