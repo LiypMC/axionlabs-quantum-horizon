@@ -1,7 +1,7 @@
 
 import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
-import anime from 'animejs/lib/anime.es.js';
+import anime from 'animejs';
 import { useTheme } from './ThemeProvider';
 
 interface AnimatedBackgroundProps {
