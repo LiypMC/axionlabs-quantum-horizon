@@ -15,27 +15,28 @@ const RotatingGlobe = () => {
     const camera = new THREE.PerspectiveCamera(60, containerRef.current.clientWidth / containerRef.current.clientHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ 
       alpha: true,
-      antialias: true
+      antialias: true,
+      powerPreference: 'high-performance'
     });
     
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(1); // Force 1x pixel ratio for performance
     containerRef.current.appendChild(renderer.domElement);
     
     // Camera setup
     camera.position.z = 4;
     
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    // Lighting - simplified
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
     
     const pointLight = new THREE.PointLight(theme === 'dark' ? 0x0095ff : 0x007ACC, 0.8);
     pointLight.position.set(5, 3, 5);
     scene.add(pointLight);
     
-    // Create the globe
+    // Create the globe - reduced geometry complexity
     const globeRadius = 1.5;
-    const globeGeometry = new THREE.SphereGeometry(globeRadius, 64, 64);
+    const globeGeometry = new THREE.SphereGeometry(globeRadius, 32, 32); // Reduced segments
     
     // Material with glow
     const globeMaterial = new THREE.MeshPhongMaterial({
@@ -49,9 +50,9 @@ const RotatingGlobe = () => {
     const globe = new THREE.Mesh(globeGeometry, globeMaterial);
     scene.add(globe);
     
-    // Create grid lines
+    // Create grid lines - fewer segments
     const gridLines = new THREE.LineSegments(
-      new THREE.EdgesGeometry(new THREE.SphereGeometry(globeRadius * 1.001, 36, 18)),
+      new THREE.EdgesGeometry(new THREE.SphereGeometry(globeRadius * 1.001, 24, 12)),
       new THREE.LineBasicMaterial({ 
         color: theme === 'dark' ? 0x0066cc : 0x007ACC,
         transparent: true,
@@ -60,13 +61,13 @@ const RotatingGlobe = () => {
     );
     scene.add(gridLines);
     
-    // Add glowing points to represent "hot spots"
-    const hotspotCount = 12;
+    // Add fewer hotspots
+    const hotspotCount = 6; // Reduced from 12
     const hotspots: THREE.Mesh[] = [];
     
     for (let i = 0; i < hotspotCount; i++) {
       // Create a small sphere
-      const hotspotGeometry = new THREE.SphereGeometry(0.03, 16, 16);
+      const hotspotGeometry = new THREE.SphereGeometry(0.03, 8, 8); // Reduced complexity
       const hotspotMaterial = new THREE.MeshBasicMaterial({
         color: 0x00bfff,
         transparent: true,
@@ -92,12 +93,12 @@ const RotatingGlobe = () => {
       (hotspot as any).phase = Math.random() * Math.PI * 2;
     }
     
-    // Add connection lines between some hotspots
+    // Fewer connection lines
     const connectionLines: THREE.Line[] = [];
     
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 4; i++) { // Reduced from 8
       const start = hotspots[i];
-      const end = hotspots[(i + 1 + Math.floor(Math.random() * 3)) % hotspotCount];
+      const end = hotspots[(i + 1) % hotspotCount];
       
       const points = [];
       points.push(start.position.clone());
@@ -115,15 +116,15 @@ const RotatingGlobe = () => {
       connectionLines.push(line);
     }
     
-    // Mouse interaction
+    // Mouse interaction - with performance optimizations
     let isDragging = false;
     let previousMousePosition = {
       x: 0,
       y: 0
     };
     let rotationVelocity = {
-      x: 0.002,
-      y: 0.001
+      x: 0.001, // Reduced from 0.002
+      y: 0.0005  // Reduced from 0.001
     };
     
     const handleMouseDown = (e: MouseEvent) => {
@@ -172,8 +173,8 @@ const RotatingGlobe = () => {
     const handleMouseUp = () => {
       isDragging = false;
       rotationVelocity = {
-        x: 0.002,
-        y: 0.001
+        x: 0.001, // Reduced
+        y: 0.0005  // Reduced
       };
     };
     
@@ -181,20 +182,34 @@ const RotatingGlobe = () => {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
     
-    // Handle window resize
+    // Handle window resize - with debouncing
+    let resizeTimeout: number;
     const handleResize = () => {
       if (!containerRef.current) return;
       
-      camera.aspect = containerRef.current.clientWidth / containerRef.current.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
+      clearTimeout(resizeTimeout);
+      resizeTimeout = window.setTimeout(() => {
+        camera.aspect = containerRef.current.clientWidth / containerRef.current.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
+      }, 250); // Debounce resize events
     };
     
     window.addEventListener('resize', handleResize);
     
-    // Animation
-    const animate = () => {
+    // Animation with frame limiting
+    let lastFrameTime = 0;
+    const targetFPS = 30; // Limit to 30 FPS
+    const frameInterval = 1000 / targetFPS;
+    
+    const animate = (currentTime: number) => {
       const animationId = requestAnimationFrame(animate);
+      
+      // Limit framerate
+      const elapsed = currentTime - lastFrameTime;
+      if (elapsed < frameInterval) return;
+      
+      lastFrameTime = currentTime - (elapsed % frameInterval);
       
       if (!isDragging) {
         globe.rotation.y += rotationVelocity.y;
@@ -203,40 +218,41 @@ const RotatingGlobe = () => {
         gridLines.rotation.x = globe.rotation.x;
       }
       
-      // Update hotspot positions to match the globe's rotation
-      hotspots.forEach((hotspot, index) => {
-        // Match globe rotation
-        hotspot.position.applyEuler(new THREE.Euler(0, rotationVelocity.y, 0));
-        
-        // Animate pulsing hotspots
-        const scale = 1 + 0.5 * Math.sin(Date.now() * 0.002 * (hotspot as any).pulseRate + (hotspot as any).phase);
-        hotspot.scale.set(scale, scale, scale);
-      });
+      // Update hotspots less frequently
+      if (Math.random() < 0.5) { // Only update ~50% of frames
+        hotspots.forEach((hotspot) => {
+          // Match globe rotation
+          hotspot.position.applyEuler(new THREE.Euler(0, rotationVelocity.y, 0));
+          
+          // Animate pulsing hotspots - simpler calculation
+          const scale = 1 + 0.3 * Math.sin(Date.now() * 0.001 * (hotspot as any).pulseRate);
+          hotspot.scale.set(scale, scale, scale);
+        });
+      }
       
-      // Update connection lines to follow hotspots
-      connectionLines.forEach((line, index) => {
-        const positions = (line.geometry.attributes.position as THREE.BufferAttribute).array;
-        const startIndex = index;
-        const endIndex = (index + 1 + Math.floor(index / 2)) % hotspotCount;
-        
-        positions[0] = hotspots[startIndex].position.x;
-        positions[1] = hotspots[startIndex].position.y;
-        positions[2] = hotspots[startIndex].position.z;
-        
-        positions[3] = hotspots[endIndex].position.x;
-        positions[4] = hotspots[endIndex].position.y;
-        positions[5] = hotspots[endIndex].position.z;
-        
-        (line.geometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
-      });
+      // Update connection lines to follow hotspots - less frequently
+      if (Math.random() < 0.3) { // Only update ~30% of frames
+        connectionLines.forEach((line, index) => {
+          const positions = (line.geometry.attributes.position as THREE.BufferAttribute).array;
+          const startIndex = index;
+          const endIndex = (index + 1) % hotspotCount;
+          
+          positions[0] = hotspots[startIndex].position.x;
+          positions[1] = hotspots[startIndex].position.y;
+          positions[2] = hotspots[startIndex].position.z;
+          
+          positions[3] = hotspots[endIndex].position.x;
+          positions[4] = hotspots[endIndex].position.y;
+          positions[5] = hotspots[endIndex].position.z;
+          
+          (line.geometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+        });
+      }
       
       renderer.render(scene, camera);
-      
-      // Store animation ID for cleanup
-      (animate as any).animationId = animationId;
     };
     
-    animate();
+    animate(0);
     
     // Cleanup function
     return () => {

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -9,6 +9,34 @@ import FloatingCube from "@/components/FloatingCube";
 export default function EmailSignup() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // Only mount the 3D cube when this section is visible
+  useEffect(() => {
+    setIsMounted(true);
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+        }
+      });
+    }, { threshold: 0.2 });
+    
+    const element = document.getElementById('signup');
+    if (element) {
+      observer.observe(element);
+    }
+    
+    return () => {
+      if (element) {
+        observer.unobserve(element);
+      }
+    };
+  }, []);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,7 +116,8 @@ export default function EmailSignup() {
             </div>
             
             <div className="hidden md:block">
-              <FloatingCube />
+              {/* Only render the cube when section is visible */}
+              {isMounted && isVisible && <FloatingCube />}
             </div>
           </div>
         </div>

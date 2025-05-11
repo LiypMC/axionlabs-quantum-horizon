@@ -1,8 +1,38 @@
 
 import { Button } from "@/components/ui/button";
 import RotatingGlobe from "@/components/RotatingGlobe";
+import { useEffect, useState } from "react";
 
 export default function ProjectSpotlight() {
+  const [isMounted, setIsMounted] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  
+  // Only mount the 3D globe when this section is visible
+  useEffect(() => {
+    setIsMounted(true);
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+        }
+      });
+    }, { threshold: 0.2 });
+    
+    const element = document.getElementById('spotlight');
+    if (element) {
+      observer.observe(element);
+    }
+    
+    return () => {
+      if (element) {
+        observer.unobserve(element);
+      }
+    };
+  }, []);
+
   return (
     <section id="spotlight" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -37,7 +67,8 @@ export default function ProjectSpotlight() {
             </div>
             
             <div className="order-1 md:order-2">
-              <RotatingGlobe />
+              {/* Only render the globe when section is visible */}
+              {isMounted && isVisible && <RotatingGlobe />}
             </div>
           </div>
         </div>

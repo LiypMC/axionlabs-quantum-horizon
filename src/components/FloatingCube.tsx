@@ -15,17 +15,18 @@ const FloatingCube = () => {
     const camera = new THREE.PerspectiveCamera(60, containerRef.current.clientWidth / containerRef.current.clientHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ 
       alpha: true,
-      antialias: true
+      antialias: false, // Disabled for performance
+      powerPreference: 'high-performance'
     });
     
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(1); // Force 1x pixel ratio for better performance
     containerRef.current.appendChild(renderer.domElement);
     
     // Camera setup
     camera.position.z = 5;
     
-    // Lighting
+    // Lighting - simplified
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
     
@@ -36,9 +37,8 @@ const FloatingCube = () => {
     // Create the cube
     const cubeSize = 1.2;
     const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-    const cubeMaterial = new THREE.MeshPhongMaterial({
+    const cubeMaterial = new THREE.MeshBasicMaterial({ // Changed to BasicMaterial for performance
       color: theme === 'dark' ? 0x002244 : 0x0066cc,
-      shininess: 100,
       transparent: true,
       opacity: 0.9,
       wireframe: false
@@ -51,7 +51,6 @@ const FloatingCube = () => {
     const wireframeGeometry = new THREE.EdgesGeometry(cubeGeometry);
     const wireframeMaterial = new THREE.LineBasicMaterial({
       color: 0x00bfff,
-      linewidth: 2,
       transparent: true,
       opacity: 0.7
     });
@@ -59,9 +58,8 @@ const FloatingCube = () => {
     const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
     cube.add(wireframe);
     
-    // Create floating particles around the cube
-    const particleCount = 50;
-    const particles: THREE.Points[] = [];
+    // Create floating particles around the cube (reduced count)
+    const particleCount = 20; // Reduced from 50
     
     const particleGeometry = new THREE.BufferGeometry();
     const particlePositions = new Float32Array(particleCount * 3);
@@ -84,18 +82,23 @@ const FloatingCube = () => {
       size: 0.05,
       transparent: true,
       opacity: 0.8,
-      blending: THREE.AdditiveBlending,
       sizeAttenuation: true
     });
     
     const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
     scene.add(particleSystem);
     
-    // Mouse interaction
+    // Mouse interaction with throttling
     let mouseX = 0;
     let mouseY = 0;
     
+    let lastMouseMoveTime = 0;
     const handleMouseMove = (e: MouseEvent) => {
+      // Throttle mouse events
+      const now = Date.now();
+      if (now - lastMouseMoveTime < 50) return; // Only process every 50ms
+      lastMouseMoveTime = now;
+      
       if (!containerRef.current) return;
       
       const rect = containerRef.current.getBoundingClientRect();
@@ -113,38 +116,56 @@ const FloatingCube = () => {
     
     window.addEventListener('mousemove', handleMouseMove);
     
-    // Handle window resize
+    // Handle window resize with debouncing
+    let resizeTimeout: number;
     const handleResize = () => {
       if (!containerRef.current) return;
       
-      camera.aspect = containerRef.current.clientWidth / containerRef.current.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
+      clearTimeout(resizeTimeout);
+      resizeTimeout = window.setTimeout(() => {
+        camera.aspect = containerRef.current.clientWidth / containerRef.current.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight);
+      }, 250);
     };
     
     window.addEventListener('resize', handleResize);
     
-    // Animation
-    const animate = () => {
+    // Animation with frame limiting
+    let lastFrameTime = 0;
+    const targetFPS = 30; // Cap at 30 FPS
+    const frameInterval = 1000 / targetFPS;
+    
+    const animate = (currentTime: number) => {
       const animationId = requestAnimationFrame(animate);
       
-      // Rotate cube
-      cube.rotation.x += 0.005;
-      cube.rotation.y += 0.01;
+      // Frame limiting
+      const elapsed = currentTime - lastFrameTime;
+      if (elapsed < frameInterval) return;
       
-      // Have cube respond to mouse position
-      cube.rotation.x += (mouseY * 0.05 - cube.rotation.x) * 0.05;
-      cube.rotation.y += (mouseX * 0.05 - cube.rotation.y) * 0.05;
+      lastFrameTime = currentTime - (elapsed % frameInterval);
       
-      // Rotate particle system
-      particleSystem.rotation.x += 0.001;
-      particleSystem.rotation.y += 0.002;
+      // Rotate cube (slower rotation)
+      cube.rotation.x += 0.003;
+      cube.rotation.y += 0.005;
       
-      // Point light orbiting
-      const time = Date.now() * 0.001;
-      pointLight.position.x = Math.sin(time * 0.7) * 3;
-      pointLight.position.y = Math.cos(time * 0.5) * 3;
-      pointLight.position.z = Math.cos(time * 0.3) * 3;
+      // Have cube respond to mouse position - less responsive for better performance
+      cube.rotation.x += (mouseY * 0.05 - cube.rotation.x) * 0.01;
+      cube.rotation.y += (mouseX * 0.05 - cube.rotation.y) * 0.01;
+      
+      // Rotate particle system - less frequently
+      if (Math.random() < 0.5) {
+        particleSystem.rotation.x += 0.001;
+        particleSystem.rotation.y += 0.002;
+      }
+      
+      // Point light orbiting - less frequent updates
+      if (Math.random() < 0.3) {
+        const time = Date.now() * 0.0005;
+        pointLight.position.x = Math.sin(time * 0.7) * 3;
+        pointLight.position.y = Math.cos(time * 0.5) * 3;
+        pointLight.position.z = Math.cos(time * 0.3) * 3;
+      }
       
       renderer.render(scene, camera);
       
@@ -152,7 +173,7 @@ const FloatingCube = () => {
       (animate as any).animationId = animationId;
     };
     
-    animate();
+    animate(0);
     
     // Cleanup function
     return () => {

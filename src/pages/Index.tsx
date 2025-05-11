@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import Hero from "@/sections/Hero";
 import Mission from "@/sections/Mission";
 import Showcase from "@/sections/Showcase";
@@ -22,7 +22,7 @@ const Index = () => {
         triggerPulseAnimation(newTheme);
         
         // Create particle explosion in the center of the screen
-        createParticleExplosion(window.innerWidth / 2, window.innerHeight / 2, 40);
+        createParticleExplosion(window.innerWidth / 2, window.innerHeight / 2, 20); // Reduced particle count
       }
     };
     
