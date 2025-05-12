@@ -10,9 +10,10 @@ import { supabase } from "@/integrations/supabase/client";
 interface NotifyButtonProps {
   variant?: "outline" | "filled";
   className?: string;
+  size?: "default" | "sm" | "lg";
 }
 
-export default function NotifyButton({ variant = "outline", className = "" }: NotifyButtonProps) {
+export default function NotifyButton({ variant = "outline", className = "", size = "default" }: NotifyButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -74,6 +75,7 @@ export default function NotifyButton({ variant = "outline", className = "" }: No
       <Button 
         onClick={() => setIsOpen(true)}
         className={`${buttonClasses} glass-panel ${className}`}
+        size={size}
       >
         Notify Me
       </Button>

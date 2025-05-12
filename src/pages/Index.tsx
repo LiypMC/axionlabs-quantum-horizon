@@ -10,6 +10,7 @@ import Footer from "@/sections/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
+import { LogOut, Settings } from "lucide-react";
 import { triggerPulseAnimation, createParticleExplosion } from "@/lib/animations";
 
 const Index = () => {
@@ -39,23 +40,27 @@ const Index = () => {
   
   return (
     <div className="min-h-screen theme-transition animated-background-pulse">
-      {/* Auth Navigation */}
-      <div className="absolute top-4 right-4 z-50 flex gap-2">
+      {/* Auth Navigation - Fixed spacing between buttons */}
+      <div className="absolute top-4 right-4 z-50 flex items-center gap-3">
         {isAuthenticated ? (
           <>
             <Button 
               as={Link} 
               to="/settings"
               variant="outline"
+              size="sm"
               className="glass-panel border-axion-blue/30 text-axion-white hover:bg-axion-blue/10"
             >
+              <Settings className="h-4 w-4 mr-1" /> 
               Profile
             </Button>
             <Button 
               onClick={signOut}
               variant="outline"
+              size="sm"
               className="glass-panel border-axion-blue/30 text-axion-white hover:bg-axion-blue/10"
             >
+              <LogOut className="h-4 w-4 mr-1" />
               Sign Out
             </Button>
           </>
@@ -63,6 +68,7 @@ const Index = () => {
           <Button 
             as={Link} 
             to="/auth"
+            size="sm"
             className="glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
           >
             Sign In

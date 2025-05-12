@@ -22,9 +22,9 @@ export default function Hero() {
             className="h-12 md:h-16 theme-transition"
           />
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <ThemeToggle />
-          <NotifyButton variant="outline" />
+          <NotifyButton variant="outline" size="sm" />
         </div>
       </header>
       
