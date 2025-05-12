@@ -3,28 +3,87 @@ import NotifyButton from "@/components/NotifyButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
 import AnimatedBackground from "@/components/AnimatedBackground";
+import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Settings, LogOut } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Hero() {
   const { theme } = useTheme();
+  const { isAuthenticated, user, signOut } = useAuth();
+  
   const logoSrc = theme === "dark" 
     ? "/lovable-uploads/0785e971-63b4-4ed9-81b0-936bc447673d.png"
     : "/lovable-uploads/d903c226-cab4-4b0d-a97d-8f198c048300.png";
+  
+  const getUserInitials = () => {
+    if (user?.email) {
+      return user.email.substring(0, 2).toUpperCase();
+    }
+    return "U";
+  };
   
   return (
     <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative theme-transition">
       <AnimatedBackground />
       
       <header className="w-full absolute top-0 left-0 right-0 flex justify-between items-center p-4 md:p-6 z-10 theme-transition">
-        <div className="flex items-center">
+        <div className="flex items-center gap-4">
           <img
             src={logoSrc}
             alt="AxionLabs Logo"
             className="h-12 md:h-16 theme-transition"
           />
+          <ThemeToggle className="ml-2" />
         </div>
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-          <NotifyButton variant="outline" size="sm" />
+        
+        <div className="flex items-center">
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="h-9 w-9 cursor-pointer hover:opacity-80 transition-opacity">
+                  <AvatarImage src={user?.user_metadata?.avatar_url} />
+                  <AvatarFallback className="bg-axion-blue text-white">
+                    {getUserInitials()}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 glass-panel">
+                <div className="p-2 text-sm">
+                  <p className="font-medium">{user?.email}</p>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/settings" className="flex items-center cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={signOut} className="flex items-center cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button 
+              as={Link} 
+              to="/auth"
+              size="sm"
+              className="glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
+            >
+              Sign In
+            </Button>
+          )}
         </div>
       </header>
       
