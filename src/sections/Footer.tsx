@@ -5,7 +5,7 @@ export default function Footer() {
   const { theme } = useTheme();
   const logoSrc = theme === "dark" 
     ? "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png"
-    : "/lovable-uploads/d903c226-cab4-4b0d-a97d-8f198c048300.png";
+    : "/lovable-uploads/b799f614-ce3b-419b-be33-2205f81930dc.png";
 
   return (
     <footer className="py-10 px-4 sm:px-6 lg:px-8 border-t border-border theme-transition">

@@ -20,10 +20,10 @@ export default function Hero() {
   const { theme } = useTheme();
   const { isAuthenticated, user, signOut } = useAuth();
   
-  // Updated dark mode logo to use the new uploaded image
+  // Updated logo sources - dark stays the same, light uses the new uploaded image
   const logoSrc = theme === "dark" 
     ? "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png"
-    : "/lovable-uploads/d903c226-cab4-4b0d-a97d-8f198c048300.png";
+    : "/lovable-uploads/b799f614-ce3b-419b-be33-2205f81930dc.png";
   
   const getUserInitials = () => {
     if (user?.email) {
