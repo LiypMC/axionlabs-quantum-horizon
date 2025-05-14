@@ -1,10 +1,16 @@
 
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const AccountSettings = () => {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const handleChangePassword = () => {
     navigate('/account/update-password');
@@ -12,6 +18,29 @@ export const AccountSettings = () => {
   
   const handleChangeEmail = () => {
     navigate('/account/update');
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      setIsDeleting(true);
+      
+      const { error } = await supabase.rpc('delete_user');
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Sign out after successful account deletion
+      await signOut();
+      toast.success('Your account has been deleted');
+      navigate('/');
+      
+    } catch (error: any) {
+      toast.error('Failed to delete account: ' + error.message);
+      console.error('Delete account error:', error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -44,13 +73,35 @@ export const AccountSettings = () => {
           These actions will affect your account and cannot be undone easily.
         </p>
         
-        <Button 
-          variant="destructive" 
-          className="w-full"
-          onClick={() => toast.info('This feature will be added later')}
-        >
-          Delete Account
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button 
+              variant="destructive" 
+              className="w-full"
+            >
+              Delete Account
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={handleDeleteAccount}
+                disabled={isDeleting}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete Account'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
