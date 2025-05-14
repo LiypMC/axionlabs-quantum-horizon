@@ -12,14 +12,23 @@ export default function AccountUpdate() {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [activeTab, setActiveTab] = useState('password');
   
   useEffect(() => {
-    // Check if we have a hash fragment that indicates password recovery
+    // Check URL hash for type parameter
     const hash = window.location.hash;
-    if (hash && hash.includes('type=recovery')) {
+    const urlParams = new URLSearchParams(hash.replace('#', ''));
+    const type = urlParams.get('type');
+    
+    if (type === 'recovery') {
       // We're in password recovery mode
+      setActiveTab('password');
       toast.info('Please set your new password');
-    } else if (!isAuthenticated) {
+    } else if (type === 'email_change') {
+      // We're in email change verification mode
+      setActiveTab('email');
+      toast.info('Please complete your email update');
+    } else if (!isAuthenticated && !hash) {
       // Not authenticated and not in recovery mode, redirect to auth
       navigate('/auth');
     } else if (user?.email) {
@@ -28,17 +37,21 @@ export default function AccountUpdate() {
     }
   }, [isAuthenticated, navigate, user]);
   
-  const isRecoveryMode = window.location.hash.includes('type=recovery');
+  const isVerificationFlow = window.location.hash.includes('type=');
   
   return (
     <AccountLayout 
       title="Account Settings" 
-      description="Update your account information"
+      description={isVerificationFlow ? "Complete your verification" : "Update your account information"}
     >
-      {isRecoveryMode ? (
-        <PasswordUpdateForm />
+      {isVerificationFlow ? (
+        window.location.hash.includes('type=recovery') ? (
+          <PasswordUpdateForm />
+        ) : (
+          <EmailUpdateForm initialEmail={email} />
+        )
       ) : (
-        <Tabs defaultValue="password" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-8">
             <TabsTrigger value="password">Password</TabsTrigger>
             <TabsTrigger value="email">Email</TabsTrigger>

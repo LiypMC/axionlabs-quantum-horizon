@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,15 @@ export const PasswordUpdateForm = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isRecoveryMode, setIsRecoveryMode] = useState(false);
+  
+  useEffect(() => {
+    // Check if we are in recovery mode (from a password reset link)
+    const hash = window.location.hash;
+    if (hash && hash.includes('type=recovery')) {
+      setIsRecoveryMode(true);
+    }
+  }, []);
   
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +61,13 @@ export const PasswordUpdateForm = () => {
 
   return (
     <form onSubmit={handleUpdatePassword} className="space-y-4">
+      {isRecoveryMode && (
+        <div className="p-4 bg-blue-500/10 rounded-md border border-blue-200 mb-4">
+          <p className="text-sm text-axion-blue font-medium">
+            You're setting a new password via a recovery link. Please enter your new password below.
+          </p>
+        </div>
+      )}
       <div className="space-y-2">
         <Label htmlFor="new-password">New Password</Label>
         <Input 

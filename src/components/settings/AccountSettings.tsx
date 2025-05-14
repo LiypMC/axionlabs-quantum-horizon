@@ -2,22 +2,75 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/contexts/AuthContext';
 
 export const AccountSettings = () => {
-  const navigate = useNavigate();
   const { signOut } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSendingReset, setIsSendingReset] = useState(false);
+  const [isSendingEmailChange, setIsSendingEmailChange] = useState(false);
   
-  const handleChangePassword = () => {
-    navigate('/account/update-password');
+  const handleSendPasswordResetLink = async () => {
+    try {
+      setIsSendingReset(true);
+      
+      const { error, data } = await supabase.auth.resetPasswordForEmail(
+        supabase.auth.getUser().then(({ data }) => data.user?.email || ""),
+        {
+          redirectTo: `${window.location.origin}/account/update-password`,
+        }
+      );
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast.success('Password reset link sent', {
+        description: 'Check your email for the password reset link'
+      });
+      
+    } catch (error: any) {
+      toast.error('Failed to send password reset link: ' + error.message);
+      console.error('Password reset error:', error);
+    } finally {
+      setIsSendingReset(false);
+    }
   };
   
-  const handleChangeEmail = () => {
-    navigate('/account/update');
+  const handleSendEmailUpdateLink = async () => {
+    try {
+      setIsSendingEmailChange(true);
+      
+      const { data: userData } = await supabase.auth.getUser();
+      const email = userData.user?.email;
+      
+      if (!email) {
+        throw new Error('User email not found');
+      }
+      
+      const { error } = await supabase.auth.updateUser({
+        email: email, // We send to current email
+        options: {
+          emailRedirectTo: `${window.location.origin}/account/update`
+        }
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast.success('Email update link sent', {
+        description: 'Check your email for the verification link'
+      });
+      
+    } catch (error: any) {
+      toast.error('Failed to send email update link: ' + error.message);
+      console.error('Email update error:', error);
+    } finally {
+      setIsSendingEmailChange(false);
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -33,7 +86,6 @@ export const AccountSettings = () => {
       // Sign out after successful account deletion
       await signOut();
       toast.success('Your account has been deleted');
-      navigate('/');
       
     } catch (error: any) {
       toast.error('Failed to delete account: ' + error.message);
@@ -47,23 +99,31 @@ export const AccountSettings = () => {
     <div className="space-y-6">
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Change Password</h3>
+        <p className="text-sm text-axion-gray">
+          We'll send a password reset link to your email address.
+        </p>
         <Button 
           variant="outline" 
           className="w-full"
-          onClick={handleChangePassword}
+          onClick={handleSendPasswordResetLink}
+          disabled={isSendingReset}
         >
-          Change Password
+          {isSendingReset ? 'Sending Link...' : 'Send Password Reset Link'}
         </Button>
       </div>
       
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Change Email</h3>
+        <p className="text-sm text-axion-gray">
+          We'll send a verification link to update your email address.
+        </p>
         <Button 
           variant="outline" 
           className="w-full"
-          onClick={handleChangeEmail}
+          onClick={handleSendEmailUpdateLink}
+          disabled={isSendingEmailChange}
         >
-          Change Email
+          {isSendingEmailChange ? 'Sending Link...' : 'Send Email Update Link'}
         </Button>
       </div>
       
