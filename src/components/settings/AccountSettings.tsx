@@ -24,7 +24,7 @@ export const AccountSettings = () => {
       const { error } = await supabase.auth.resetPasswordForEmail(
         user.email,
         {
-          redirectTo: `${window.location.origin}/account/update-password`,
+          redirectTo: `${window.location.origin}/account/update#type=recovery`,
         }
       );
       
@@ -56,7 +56,7 @@ export const AccountSettings = () => {
       const { error } = await supabase.auth.updateUser({
         email: user.email, // We send to current email
         options: {
-          emailRedirectTo: `${window.location.origin}/account/update`
+          emailRedirectTo: `${window.location.origin}/account/update#type=email_change`
         }
       } as any); // Type assertion to bypass TypeScript error temporarily
       
