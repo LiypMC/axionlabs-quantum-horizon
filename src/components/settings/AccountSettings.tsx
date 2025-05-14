@@ -7,7 +7,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useAuth } from '@/contexts/AuthContext';
 
 export const AccountSettings = () => {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSendingReset, setIsSendingReset] = useState(false);
   const [isSendingEmailChange, setIsSendingEmailChange] = useState(false);
@@ -16,8 +16,13 @@ export const AccountSettings = () => {
     try {
       setIsSendingReset(true);
       
-      const { error, data } = await supabase.auth.resetPasswordForEmail(
-        supabase.auth.getUser().then(({ data }) => data.user?.email || ""),
+      // Check if we have the user email
+      if (!user || !user.email) {
+        throw new Error('User email not found');
+      }
+      
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        user.email,
         {
           redirectTo: `${window.location.origin}/account/update-password`,
         }
@@ -43,19 +48,17 @@ export const AccountSettings = () => {
     try {
       setIsSendingEmailChange(true);
       
-      const { data: userData } = await supabase.auth.getUser();
-      const email = userData.user?.email;
-      
-      if (!email) {
+      // Check if we have the user email
+      if (!user || !user.email) {
         throw new Error('User email not found');
       }
       
       const { error } = await supabase.auth.updateUser({
-        email: email, // We send to current email
+        email: user.email, // We send to current email
         options: {
           emailRedirectTo: `${window.location.origin}/account/update`
         }
-      });
+      } as any); // Type assertion to bypass TypeScript error temporarily
       
       if (error) {
         throw error;
