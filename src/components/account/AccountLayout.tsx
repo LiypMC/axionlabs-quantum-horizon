@@ -22,7 +22,7 @@ export const AccountLayout = ({ children, title, description }: AccountLayoutPro
     : "/lovable-uploads/b799f614-ce3b-419b-be33-2205f81930dc.png";
   
   return (
-    <div className="min-h-screen bg-background theme-transition animated-background-pulse">
+    <div className="min-h-screen bg-background theme-transition">
       <header className="w-full p-4 md:p-6 flex justify-between items-center z-10">
         <Button 
           variant="ghost" 
@@ -36,7 +36,7 @@ export const AccountLayout = ({ children, title, description }: AccountLayoutPro
         <ThemeToggle />
       </header>
       
-      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-6 animate-fade-in">
+      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-6">
         <Card className="w-full max-w-md quantum-glass neural-border">
           <CardHeader className="text-center space-y-2">
             <div className="flex justify-center mb-2">

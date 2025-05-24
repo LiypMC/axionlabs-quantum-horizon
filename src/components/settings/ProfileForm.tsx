@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { User } from '@supabase/supabase-js';
@@ -56,6 +58,7 @@ export const ProfileForm = ({ user, initialUsername, initialFullName }: ProfileF
           id="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          className="bg-background/50 border-white/20 focus:border-quantum-purple"
         />
       </div>
       <div className="space-y-2">
@@ -64,6 +67,7 @@ export const ProfileForm = ({ user, initialUsername, initialFullName }: ProfileF
           id="fullName"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
+          className="bg-background/50 border-white/20 focus:border-quantum-purple"
         />
       </div>
       <div className="space-y-2">
@@ -72,12 +76,13 @@ export const ProfileForm = ({ user, initialUsername, initialFullName }: ProfileF
           id="email"
           value={user?.email || ''}
           disabled
+          className="bg-background/30 border-white/10"
         />
-        <p className="text-xs text-axion-gray">Email cannot be changed (yet)</p>
+        <p className="text-xs text-foreground/60">Email cannot be changed (yet)</p>
       </div>
       <Button 
         type="submit" 
-        className="w-full glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
+        className="w-full energy-button rounded-lg py-3 neon-glow"
         disabled={updating}
       >
         {updating ? 'Saving...' : 'Save Changes'}

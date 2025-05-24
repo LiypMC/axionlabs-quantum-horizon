@@ -30,23 +30,47 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          company_name: string | null
+          company_size: string | null
+          department: string | null
           full_name: string | null
           id: string
+          industry: string | null
+          job_title: string | null
+          phone_number: string | null
+          profile_completed: boolean | null
           updated_at: string | null
+          use_case: string | null
           username: string | null
         }
         Insert: {
           avatar_url?: string | null
+          company_name?: string | null
+          company_size?: string | null
+          department?: string | null
           full_name?: string | null
           id: string
+          industry?: string | null
+          job_title?: string | null
+          phone_number?: string | null
+          profile_completed?: boolean | null
           updated_at?: string | null
+          use_case?: string | null
           username?: string | null
         }
         Update: {
           avatar_url?: string | null
+          company_name?: string | null
+          company_size?: string | null
+          department?: string | null
           full_name?: string | null
           id?: string
+          industry?: string | null
+          job_title?: string | null
+          phone_number?: string | null
+          profile_completed?: boolean | null
           updated_at?: string | null
+          use_case?: string | null
           username?: string | null
         }
         Relationships: []

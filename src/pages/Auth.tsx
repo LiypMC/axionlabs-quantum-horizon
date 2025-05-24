@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,14 +12,16 @@ import { toast } from 'sonner';
 import { ArrowLeft, Github, Mail } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { EnterpriseOnboarding } from '@/components/auth/EnterpriseOnboarding';
 
 export default function Auth() {
-  const { signIn, signUp, signInWithGoogle, signInWithGithub, isAuthenticated } = useAuth();
+  const { signIn, signUp, signInWithGoogle, signInWithGithub, isAuthenticated, user, profile } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [resetPasswordMode, setResetPasswordMode] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const { theme } = useTheme();
   
   // Logo source based on theme
@@ -26,8 +29,19 @@ export default function Auth() {
     ? "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png"
     : "/lovable-uploads/b799f614-ce3b-419b-be33-2205f81930dc.png";
   
-  // Redirect if already authenticated
-  if (isAuthenticated) {
+  // Check if user needs onboarding
+  useEffect(() => {
+    if (isAuthenticated && user && profile) {
+      if (!profile.profile_completed) {
+        setShowOnboarding(true);
+      } else {
+        navigate('/');
+      }
+    }
+  }, [isAuthenticated, user, profile, navigate]);
+  
+  // Redirect if already authenticated and profile is complete
+  if (isAuthenticated && profile?.profile_completed) {
     return <Navigate to="/" />;
   }
   
@@ -40,8 +54,6 @@ export default function Auth() {
       
       if (error) {
         toast.error(error.message);
-      } else {
-        navigate('/');
       }
     } catch (error: any) {
       toast.error('Failed to sign in');
@@ -128,9 +140,14 @@ export default function Auth() {
       console.error('GitHub sign in error:', error);
     }
   };
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    navigate('/');
+  };
   
   return (
-    <div className="min-h-screen bg-background theme-transition animated-background-pulse">
+    <div className="min-h-screen bg-background theme-transition">
       <header className="w-full p-4 md:p-6 flex justify-between items-center z-10">
         <Link to="/" className="flex items-center gap-2 text-foreground hover:text-quantum-cyan transition-colors">
           <ArrowLeft className="h-5 w-5" />
@@ -139,29 +156,35 @@ export default function Auth() {
         <ThemeToggle />
       </header>
       
-      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-6 animate-fade-in">
+      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-6">
         <Card className="w-full max-w-md quantum-glass neural-border">
           <CardHeader className="text-center space-y-2">
             <div className="flex justify-center mb-2">
               <img src={logoSrc} alt="AxionLabs Logo" className="h-12 theme-transition" />
             </div>
-            <CardTitle className="heading text-2xl">Welcome to AxionLabs</CardTitle>
+            <CardTitle className="heading text-2xl">
+              {showOnboarding ? 'Welcome to AxionLabs' : 'Welcome to AxionLabs'}
+            </CardTitle>
             <CardDescription className="text-foreground/80">
-              {resetPasswordMode 
-                ? "Reset your password" 
-                : "Sign in or create an account"}
+              {showOnboarding 
+                ? "Let's set up your enterprise profile" 
+                : resetPasswordMode 
+                  ? "Reset your password" 
+                  : "Enterprise-grade AI solutions"}
             </CardDescription>
           </CardHeader>
           
           <CardContent>
-            {resetPasswordMode ? (
+            {showOnboarding && user ? (
+              <EnterpriseOnboarding user={user} onComplete={handleOnboardingComplete} />
+            ) : resetPasswordMode ? (
               <form onSubmit={handleResetPassword} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="reset-email" className="text-foreground">Email</Label>
                   <Input 
                     id="reset-email" 
                     type="email" 
-                    placeholder="your.email@example.com"
+                    placeholder="your.email@company.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="bg-background/50 border-white/20 focus:border-quantum-purple focus-quantum"
@@ -230,7 +253,7 @@ export default function Auth() {
                         <Input 
                           id="signin-email" 
                           type="email" 
-                          placeholder="your.email@example.com"
+                          placeholder="your.email@company.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           className="bg-background/50 border-white/20 focus:border-quantum-purple focus-quantum"
@@ -269,11 +292,11 @@ export default function Auth() {
                   <TabsContent value="signup">
                     <form onSubmit={handleSignUp} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="signup-email" className="text-foreground">Email</Label>
+                        <Label htmlFor="signup-email" className="text-foreground">Work Email</Label>
                         <Input 
                           id="signup-email" 
                           type="email" 
-                          placeholder="your.email@example.com"
+                          placeholder="your.email@company.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           className="bg-background/50 border-white/20 focus:border-quantum-purple focus-quantum"
@@ -298,7 +321,7 @@ export default function Auth() {
                         className="w-full energy-button rounded-lg py-3 neon-glow"
                         disabled={loading}
                       >
-                        {loading ? 'Signing Up...' : 'Sign Up'}
+                        {loading ? 'Creating Account...' : 'Create Enterprise Account'}
                       </Button>
                     </form>
                   </TabsContent>
