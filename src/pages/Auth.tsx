@@ -132,7 +132,7 @@ export default function Auth() {
   return (
     <div className="min-h-screen bg-background theme-transition animated-background-pulse">
       <header className="w-full p-4 md:p-6 flex justify-between items-center z-10">
-        <Link to="/" className="flex items-center gap-2 text-foreground hover:text-axion-blue transition-colors">
+        <Link to="/" className="flex items-center gap-2 text-foreground hover:text-quantum-cyan transition-colors">
           <ArrowLeft className="h-5 w-5" />
           <span>Back to Home</span>
         </Link>
@@ -140,13 +140,13 @@ export default function Auth() {
       </header>
       
       <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-6 animate-fade-in">
-        <Card className="w-full max-w-md glass-panel border-axion-blue/30 neon-border">
+        <Card className="w-full max-w-md quantum-glass neural-border">
           <CardHeader className="text-center space-y-2">
             <div className="flex justify-center mb-2">
               <img src={logoSrc} alt="AxionLabs Logo" className="h-12 theme-transition" />
             </div>
             <CardTitle className="heading text-2xl">Welcome to AxionLabs</CardTitle>
-            <CardDescription>
+            <CardDescription className="text-foreground/80">
               {resetPasswordMode 
                 ? "Reset your password" 
                 : "Sign in or create an account"}
@@ -157,20 +157,20 @@ export default function Auth() {
             {resetPasswordMode ? (
               <form onSubmit={handleResetPassword} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="reset-email">Email</Label>
+                  <Label htmlFor="reset-email" className="text-foreground">Email</Label>
                   <Input 
                     id="reset-email" 
                     type="email" 
                     placeholder="your.email@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="bg-background/50"
+                    className="bg-background/50 border-white/20 focus:border-quantum-purple focus-quantum"
                     required
                   />
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
+                  className="w-full energy-button rounded-lg py-3 neon-glow"
                   disabled={loading}
                 >
                   {loading ? 'Sending...' : 'Send Reset Link'}
@@ -178,7 +178,7 @@ export default function Auth() {
                 <Button 
                   type="button"
                   variant="ghost" 
-                  className="w-full text-sm mt-2"
+                  className="w-full text-sm mt-2 text-foreground/70 hover:text-quantum-cyan"
                   onClick={() => setResetPasswordMode(false)}
                 >
                   Back to login
@@ -189,7 +189,7 @@ export default function Auth() {
                 <div className="space-y-4 mb-6">
                   <Button 
                     type="button"
-                    className="w-full flex items-center justify-center gap-2 border border-input bg-background hover:bg-accent"
+                    className="w-full flex items-center justify-center gap-2 border border-white/20 bg-background/50 hover:bg-quantum-purple/20 text-foreground backdrop-blur-xl"
                     onClick={handleGoogleSignIn}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" className="h-5 w-5">
@@ -203,7 +203,7 @@ export default function Auth() {
                   
                   <Button 
                     type="button"
-                    className="w-full flex items-center justify-center gap-2 border border-input bg-background hover:bg-accent"
+                    className="w-full flex items-center justify-center gap-2 border border-white/20 bg-background/50 hover:bg-quantum-purple/20 text-foreground backdrop-blur-xl"
                     onClick={handleGithubSignIn}
                   >
                     <Github className="h-5 w-5" />
@@ -211,46 +211,46 @@ export default function Auth() {
                   </Button>
                   
                   <div className="relative flex items-center py-2">
-                    <div className="flex-grow border-t border-muted"></div>
-                    <span className="mx-4 flex-shrink text-muted-foreground text-xs">OR</span>
-                    <div className="flex-grow border-t border-muted"></div>
+                    <div className="flex-grow border-t border-white/20"></div>
+                    <span className="mx-4 flex-shrink text-foreground/60 text-xs">OR</span>
+                    <div className="flex-grow border-t border-white/20"></div>
                   </div>
                 </div>
                 
                 <Tabs defaultValue="signin" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-8">
-                    <TabsTrigger value="signin">Sign In</TabsTrigger>
-                    <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-2 mb-8 bg-background/30 border border-white/10">
+                    <TabsTrigger value="signin" className="data-[state=active]:bg-quantum-purple/20 data-[state=active]:text-quantum-cyan">Sign In</TabsTrigger>
+                    <TabsTrigger value="signup" className="data-[state=active]:bg-quantum-purple/20 data-[state=active]:text-quantum-cyan">Sign Up</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="signin">
                     <form onSubmit={handleSignIn} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="signin-email">Email</Label>
+                        <Label htmlFor="signin-email" className="text-foreground">Email</Label>
                         <Input 
                           id="signin-email" 
                           type="email" 
                           placeholder="your.email@example.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="bg-background/50"
+                          className="bg-background/50 border-white/20 focus:border-quantum-purple focus-quantum"
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="signin-password">Password</Label>
+                        <Label htmlFor="signin-password" className="text-foreground">Password</Label>
                         <Input 
                           id="signin-password" 
                           type="password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="bg-background/50"
+                          className="bg-background/50 border-white/20 focus:border-quantum-purple focus-quantum"
                           required
                         />
                       </div>
                       <Button 
                         type="submit" 
-                        className="w-full glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
+                        className="w-full energy-button rounded-lg py-3 neon-glow"
                         disabled={loading}
                       >
                         {loading ? 'Signing In...' : 'Sign In'}
@@ -258,7 +258,7 @@ export default function Auth() {
                       <Button 
                         type="button"
                         variant="link" 
-                        className="w-full text-sm mt-2"
+                        className="w-full text-sm mt-2 text-quantum-cyan hover:text-quantum-magenta"
                         onClick={() => setResetPasswordMode(true)}
                       >
                         Forgot your password?
@@ -269,33 +269,33 @@ export default function Auth() {
                   <TabsContent value="signup">
                     <form onSubmit={handleSignUp} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="signup-email">Email</Label>
+                        <Label htmlFor="signup-email" className="text-foreground">Email</Label>
                         <Input 
                           id="signup-email" 
                           type="email" 
                           placeholder="your.email@example.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="bg-background/50"
+                          className="bg-background/50 border-white/20 focus:border-quantum-purple focus-quantum"
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="signup-password">Password</Label>
+                        <Label htmlFor="signup-password" className="text-foreground">Password</Label>
                         <Input 
                           id="signup-password" 
                           type="password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           minLength={6}
-                          className="bg-background/50"
+                          className="bg-background/50 border-white/20 focus:border-quantum-purple focus-quantum"
                           required
                         />
-                        <p className="text-xs text-axion-gray">Must be at least 6 characters</p>
+                        <p className="text-xs text-foreground/60">Must be at least 6 characters</p>
                       </div>
                       <Button 
                         type="submit" 
-                        className="w-full glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
+                        className="w-full energy-button rounded-lg py-3 neon-glow"
                         disabled={loading}
                       >
                         {loading ? 'Signing Up...' : 'Sign Up'}
@@ -307,7 +307,7 @@ export default function Auth() {
             )}
           </CardContent>
           
-          <CardFooter className="justify-center text-sm text-axion-gray">
+          <CardFooter className="justify-center text-sm text-foreground/60">
             <p>Protected by AxionLabs encryption</p>
           </CardFooter>
         </Card>

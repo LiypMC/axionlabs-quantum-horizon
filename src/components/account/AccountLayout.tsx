@@ -28,7 +28,7 @@ export const AccountLayout = ({ children, title, description }: AccountLayoutPro
           variant="ghost" 
           as={Link}
           to="/" 
-          className="flex items-center gap-2 text-foreground hover:text-axion-blue transition-colors"
+          className="flex items-center gap-2 text-foreground hover:text-quantum-cyan transition-colors"
         >
           <ArrowLeft className="h-5 w-5" />
           <span>Back to Home</span>
@@ -37,20 +37,20 @@ export const AccountLayout = ({ children, title, description }: AccountLayoutPro
       </header>
       
       <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-6 animate-fade-in">
-        <Card className="w-full max-w-md glass-panel border-axion-blue/30 neon-border">
+        <Card className="w-full max-w-md quantum-glass neural-border">
           <CardHeader className="text-center space-y-2">
             <div className="flex justify-center mb-2">
               <img src={logoSrc} alt="AxionLabs Logo" className="h-12 theme-transition" />
             </div>
             <CardTitle className="heading text-2xl">{title}</CardTitle>
-            {description && <CardDescription>{description}</CardDescription>}
+            {description && <CardDescription className="text-foreground/80">{description}</CardDescription>}
           </CardHeader>
           
           <CardContent>
             {children}
           </CardContent>
           
-          <CardFooter className="justify-center text-sm text-axion-gray">
+          <CardFooter className="justify-center text-sm text-foreground/60">
             <p>Protected by AxionLabs encryption</p>
           </CardFooter>
         </Card>

@@ -81,6 +81,12 @@ export default {
 					matrix: '#16213E',
 					glow: '#0F3460',
 					accent: '#E94560'
+				},
+				// Add axion colors for backward compatibility
+				axion: {
+					blue: '#06B6D4',
+					white: '#FFFFFF',
+					gray: '#9CA3AF'
 				}
 			},
 			borderRadius: {
