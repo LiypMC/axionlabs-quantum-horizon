@@ -48,99 +48,90 @@
   }
 
   .light {
-    --background: 240 20% 98%;
-    --foreground: 240 15% 8%;
+    --background: 255 255 255;
+    --foreground: 15 15 15;
     
-    --card: 240 25% 96%;
-    --card-foreground: 240 15% 12%;
+    --card: 250 250 250;
+    --card-foreground: 25 25 25;
     
-    --popover: 240 25% 96%;
-    --popover-foreground: 240 15% 12%;
+    --popover: 255 255 255;
+    --popover-foreground: 15 15 15;
     
     --primary: 262 83% 58%;
-    --primary-foreground: 240 20% 98%;
+    --primary-foreground: 255 255 255;
     
-    --secondary: 240 10% 90%;
+    --secondary: 240 5% 95%;
     --secondary-foreground: 240 15% 15%;
     
-    --muted: 240 10% 92%;
-    --muted-foreground: 240 8% 45%;
+    --muted: 245 245 245;
+    --muted-foreground: 100 100 100;
     
     --accent: 188 85% 53%;
-    --accent-foreground: 240 20% 98%;
+    --accent-foreground: 255 255 255;
     
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 255 255 255;
     
-    --border: 240 10% 85%;
-    --input: 240 10% 85%;
+    --border: 220 220 220;
+    --input: 230 230 230;
     --ring: 262 83% 58%;
   }
 
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
 
   html {
     @apply scroll-smooth;
-    background-color: hsl(var(--background));
+    height: 100%;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    background-color: hsl(var(--background)) !important;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    min-height: 100vh;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.15s ease, color 0.15s ease;
   }
 
   #root {
-    background-color: hsl(var(--background));
     min-height: 100vh;
-    transition: background-color 0.2s ease;
-  }
-
-  .dark {
-    background-color: hsl(var(--background));
-  }
-
-  .dark body {
-    background-color: hsl(var(--background)) !important;
-  }
-
-  .light {
-    background-color: hsl(var(--background));
-  }
-
-  .light body {
-    background-color: hsl(var(--background)) !important;
+    width: 100%;
+    transition: background-color 0.15s ease;
   }
 }
 
 @layer components {
   .quantum-glass {
-    @apply backdrop-blur-sm border rounded-xl shadow-lg;
-    border-color: rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.05);
-    transition: all 0.2s ease;
+    @apply backdrop-blur-md border rounded-xl shadow-xl;
+    border-color: rgba(139, 92, 246, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.15s ease;
   }
   
   .quantum-glass:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.15);
   }
 
   .light .quantum-glass {
-    background: rgba(255, 255, 255, 0.8);
-    border-color: rgba(139, 92, 246, 0.15);
-    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(139, 92, 246, 0.25);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .light .quantum-glass:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   }
   
   .neural-border {
-    border: 1px solid rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.3);
   }
 
   .light .neural-border {
-    border-color: rgba(139, 92, 246, 0.3);
+    border-color: rgba(139, 92, 246, 0.4);
   }
   
   .holographic-text {
@@ -151,7 +142,7 @@
   .energy-button {
     @apply relative overflow-hidden text-white font-semibold;
     background: linear-gradient(135deg, #8B5CF6, #06B6D4);
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
   }
   
   .energy-button:hover {
@@ -160,25 +151,34 @@
   }
 
   .glass-panel {
-    @apply backdrop-blur-sm border rounded-xl shadow-lg;
-    border-color: rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.05);
-    transition: all 0.2s ease;
+    @apply backdrop-blur-md border rounded-xl shadow-lg;
+    border-color: rgba(139, 92, 246, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.15s ease;
   }
 
   .light .glass-panel {
-    background: rgba(255, 255, 255, 0.8);
-    border-color: rgba(139, 92, 246, 0.2);
-    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(139, 92, 246, 0.3);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   }
 
   .neon-glow {
-    box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
-    transition: box-shadow 0.2s ease;
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+    transition: box-shadow 0.15s ease;
   }
 
   .neon-glow:hover {
-    box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+  }
+
+  .light .neon-glow {
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+  }
+
+  .light .neon-glow:hover {
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
   }
 
   .heading {
@@ -190,24 +190,36 @@
   }
 
   .theme-transition {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    background-color: inherit;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .theme-text-transition {
-    transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  section {
-    background-color: inherit;
+    transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .bg-background {
-    background-color: hsl(var(--background)) !important;
+    background-color: hsl(var(--background));
   }
 
   .bg-card {
-    background-color: hsl(var(--card)) !important;
+    background-color: hsl(var(--card));
+  }
+
+  /* Light theme specific improvements */
+  .light section {
+    background-color: hsl(var(--background));
+  }
+
+  .light .text-axion-gray {
+    color: hsl(60 60 60);
+  }
+
+  .light .text-axion-blue {
+    color: hsl(188 85% 45%);
+  }
+
+  .light .text-foreground {
+    color: hsl(var(--foreground));
   }
 }
 

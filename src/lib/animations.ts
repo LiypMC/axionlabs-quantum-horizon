@@ -1,66 +1,71 @@
 
-// Simplified animation utilities for better performance
+// Optimized animations for better performance and smoother theme transitions
 
 export const triggerPulseAnimation = (theme: string) => {
-  // Minimal animation to avoid performance issues
+  // Minimal flash animation
   const elements = document.querySelectorAll('.animated-background-pulse');
   elements.forEach(el => {
     if (el instanceof HTMLElement) {
-      el.style.opacity = '0.8';
+      el.style.transition = 'opacity 0.1s ease';
+      el.style.opacity = '0.9';
       setTimeout(() => {
         el.style.opacity = '1';
-      }, 150);
+      }, 100);
     }
   });
 };
 
-export const createParticleExplosion = (x: number, y: number, count = 8) => {
-  // Reduced particle count for better performance
+export const createParticleExplosion = (x: number, y: number, count = 6) => {
+  // Reduced particle count and simplified animation
   let container = document.getElementById('particle-explosion-container');
   if (!container) {
     container = document.createElement('div');
     container.id = 'particle-explosion-container';
-    container.style.position = 'fixed';
-    container.style.top = '0';
-    container.style.left = '0';
-    container.style.width = '100%';
-    container.style.height = '100%';
-    container.style.pointerEvents = 'none';
-    container.style.zIndex = '50';
+    container.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 50;
+    `;
     document.body.appendChild(container);
   }
 
-  // Create fewer, simpler particles
+  // Create smaller, faster particles
   for (let i = 0; i < count; i++) {
     const particle = document.createElement('div');
-    const size = Math.random() * 6 + 3;
-    const randomX = Math.random() * 100 - 50;
-    const randomY = Math.random() * 100 - 50;
+    const size = Math.random() * 4 + 2;
+    const randomX = Math.random() * 80 - 40;
+    const randomY = Math.random() * 80 - 40;
     
-    particle.style.position = 'absolute';
-    particle.style.width = `${size}px`;
-    particle.style.height = `${size}px`;
-    particle.style.borderRadius = '50%';
-    particle.style.backgroundColor = '#007ACC';
-    particle.style.left = `${x}px`;
-    particle.style.top = `${y}px`;
-    particle.style.opacity = '0.8';
-    particle.style.pointerEvents = 'none';
-    particle.style.transition = 'all 0.5s ease-out';
+    particle.style.cssText = `
+      position: absolute;
+      width: ${size}px;
+      height: ${size}px;
+      border-radius: 50%;
+      background-color: #8B5CF6;
+      left: ${x}px;
+      top: ${y}px;
+      opacity: 0.7;
+      pointer-events: none;
+      transition: all 0.4s ease-out;
+    `;
     
     container.appendChild(particle);
     
-    // Animate particle
+    // Animate particle with requestAnimationFrame for better performance
     requestAnimationFrame(() => {
       particle.style.transform = `translate(${randomX}px, ${randomY}px) scale(0)`;
       particle.style.opacity = '0';
     });
     
-    // Clean up faster
+    // Clean up quickly
     setTimeout(() => {
       if (container && container.contains(particle)) {
         container.removeChild(particle);
       }
-    }, 600);
+    }, 450);
   }
 };
