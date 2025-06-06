@@ -1,31 +1,21 @@
 
-// Simple animation utilities without anime.js dependency
+// Simplified animation utilities for better performance
 
 export const triggerPulseAnimation = (theme: string) => {
+  // Minimal animation to avoid performance issues
   const elements = document.querySelectorAll('.animated-background-pulse');
   elements.forEach(el => {
     if (el instanceof HTMLElement) {
-      // Add and remove a class to trigger CSS animation
-      el.classList.add('pulse-animation');
-      setTimeout(() => el.classList.remove('pulse-animation'), 1000);
-    }
-  });
-  
-  // Theme transition particles
-  const particles = document.querySelectorAll('.theme-transition-particle');
-  const color = theme === 'dark' ? '#0066cc' : '#007ACC';
-  
-  particles.forEach(particle => {
-    if (particle instanceof HTMLElement) {
-      particle.style.backgroundColor = color;
-      particle.classList.add('particle-animation');
-      setTimeout(() => particle.classList.remove('particle-animation'), 700);
+      el.style.opacity = '0.8';
+      setTimeout(() => {
+        el.style.opacity = '1';
+      }, 150);
     }
   });
 };
 
-export const createParticleExplosion = (x: number, y: number, count = 20) => {
-  // Create container if it doesn't exist
+export const createParticleExplosion = (x: number, y: number, count = 8) => {
+  // Reduced particle count for better performance
   let container = document.getElementById('particle-explosion-container');
   if (!container) {
     container = document.createElement('div');
@@ -40,14 +30,13 @@ export const createParticleExplosion = (x: number, y: number, count = 20) => {
     document.body.appendChild(container);
   }
 
-  // Create particles using DOM elements with CSS animations
+  // Create fewer, simpler particles
   for (let i = 0; i < count; i++) {
     const particle = document.createElement('div');
-    const size = Math.random() * 10 + 5;
-    const randomX = Math.random() * 200 - 100;
-    const randomY = Math.random() * 200 - 100;
+    const size = Math.random() * 6 + 3;
+    const randomX = Math.random() * 100 - 50;
+    const randomY = Math.random() * 100 - 50;
     
-    particle.className = 'theme-transition-particle particle-explosion';
     particle.style.position = 'absolute';
     particle.style.width = `${size}px`;
     particle.style.height = `${size}px`;
@@ -55,17 +44,23 @@ export const createParticleExplosion = (x: number, y: number, count = 20) => {
     particle.style.backgroundColor = '#007ACC';
     particle.style.left = `${x}px`;
     particle.style.top = `${y}px`;
-    particle.style.transform = `translate(${randomX}px, ${randomY}px) scale(0)`;
-    particle.style.opacity = '0';
+    particle.style.opacity = '0.8';
     particle.style.pointerEvents = 'none';
+    particle.style.transition = 'all 0.5s ease-out';
     
     container.appendChild(particle);
     
-    // Remove particle after animation completes
+    // Animate particle
+    requestAnimationFrame(() => {
+      particle.style.transform = `translate(${randomX}px, ${randomY}px) scale(0)`;
+      particle.style.opacity = '0';
+    });
+    
+    // Clean up faster
     setTimeout(() => {
       if (container && container.contains(particle)) {
         container.removeChild(particle);
       }
-    }, 2000);
+    }, 600);
   }
 };

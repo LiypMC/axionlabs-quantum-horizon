@@ -89,28 +89,22 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     background-color: hsl(var(--background)) !important;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
     min-height: 100vh;
   }
 
-  /* Ensure all major containers inherit background properly */
   #root {
     background-color: hsl(var(--background));
     min-height: 100vh;
+    transition: background-color 0.2s ease;
   }
 
-  /* Fixed theme backgrounds with proper inheritance */
   .dark {
     background-color: hsl(var(--background));
   }
 
   .dark body {
     background-color: hsl(var(--background)) !important;
-    background-image: 
-      radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
-    background-size: 100% 100%, 100% 100%;
-    background-attachment: fixed;
   }
 
   .light {
@@ -119,35 +113,28 @@
 
   .light body {
     background-color: hsl(var(--background)) !important;
-    background-image: 
-      radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.03) 0%, transparent 40%),
-      radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.03) 0%, transparent 40%);
-    background-size: 100% 100%, 100% 100%;
-    background-attachment: fixed;
   }
 }
 
 @layer components {
-  /* Fixed Glass Panels with proper theme inheritance */
   .quantum-glass {
-    @apply backdrop-blur-md border rounded-xl shadow-xl;
+    @apply backdrop-blur-sm border rounded-xl shadow-lg;
     border-color: rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.05);
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
   }
   
   .quantum-glass:hover {
     transform: translateY(-1px);
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
   }
 
   .light .quantum-glass {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.8);
     border-color: rgba(139, 92, 246, 0.15);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(8px);
   }
   
-  /* Fixed Neural Network Borders */
   .neural-border {
     border: 1px solid rgba(139, 92, 246, 0.2);
   }
@@ -156,17 +143,15 @@
     border-color: rgba(139, 92, 246, 0.3);
   }
   
-  /* Fixed Holographic Text Effects */
   .holographic-text {
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(135deg, #8B5CF6, #06B6D4, #EC4899);
   }
   
-  /* Fixed Energy Button */
   .energy-button {
     @apply relative overflow-hidden text-white font-semibold;
     background: linear-gradient(135deg, #8B5CF6, #06B6D4);
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
   }
   
   .energy-button:hover {
@@ -174,27 +159,26 @@
     transform: scale(1.02);
   }
 
-  /* Fixed glass panel */
   .glass-panel {
-    @apply backdrop-blur-md border rounded-xl shadow-lg;
+    @apply backdrop-blur-sm border rounded-xl shadow-lg;
     border-color: rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.05);
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
   }
 
   .light .glass-panel {
     background: rgba(255, 255, 255, 0.8);
     border-color: rgba(139, 92, 246, 0.2);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(8px);
   }
 
   .neon-glow {
-    box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
-    transition: box-shadow 0.3s ease;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+    transition: box-shadow 0.2s ease;
   }
 
   .neon-glow:hover {
-    box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
   }
 
   .heading {
@@ -205,22 +189,19 @@
     -webkit-text-fill-color: transparent;
   }
 
-  /* Enhanced theme transition class */
   .theme-transition {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     background-color: inherit;
   }
 
   .theme-text-transition {
-    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Ensure sections inherit background properly */
   section {
     background-color: inherit;
   }
 
-  /* Fix for cards and containers */
   .bg-background {
     background-color: hsl(var(--background)) !important;
   }
@@ -230,7 +211,6 @@
   }
 }
 
-/* Fixed Scrollbar with theme awareness */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -248,13 +228,11 @@
   background: linear-gradient(to bottom, rgba(139, 92, 246, 0.6), rgba(6, 182, 212, 0.6));
 }
 
-/* Selection Colors */
 ::selection {
   background: rgba(139, 92, 246, 0.2);
   color: hsl(var(--foreground));
 }
 
-/* Accessibility Improvements */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -263,7 +241,6 @@
   }
 }
 
-/* Focus Styles */
 .focus-quantum:focus {
   outline: 2px solid rgba(139, 92, 246, 0.6);
   outline-offset: 2px;
