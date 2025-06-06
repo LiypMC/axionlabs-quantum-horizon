@@ -9,12 +9,11 @@ interface ThemeToggleProps {
 }
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
 
-  const handleThemeChange = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    triggerPulseAnimation(newTheme);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Since we're locked to dark mode, just trigger animations for visual feedback
+    triggerPulseAnimation();
     
     // Create particle explosion at the click position
     createParticleExplosion(event.clientX, event.clientY);
@@ -25,12 +24,13 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       variant="outline"
       size="icon"
       className={`rounded-full theme-transition ${className || ""}`}
-      onClick={handleThemeChange}
-      aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+      onClick={handleClick}
+      aria-label="Dark mode (locked)"
+      disabled
     >
-      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Toggle theme</span>
+      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-0 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:rotate-0 dark:scale-100" />
+      <span className="sr-only">Dark mode enabled</span>
     </Button>
   );
 }
