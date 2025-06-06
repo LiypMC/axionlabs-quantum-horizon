@@ -47,36 +47,6 @@
     --sidebar-ring: 262 83% 68%;
   }
 
-  .light {
-    --background: 255 255 255;
-    --foreground: 15 15 15;
-    
-    --card: 250 250 250;
-    --card-foreground: 25 25 25;
-    
-    --popover: 255 255 255;
-    --popover-foreground: 15 15 15;
-    
-    --primary: 262 83% 58%;
-    --primary-foreground: 255 255 255;
-    
-    --secondary: 240 5% 95%;
-    --secondary-foreground: 240 15% 15%;
-    
-    --muted: 245 245 245;
-    --muted-foreground: 100 100 100;
-    
-    --accent: 188 85% 53%;
-    --accent-foreground: 255 255 255;
-    
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 255 255 255;
-    
-    --border: 220 220 220;
-    --input: 230 230 230;
-    --ring: 262 83% 58%;
-  }
-
   * {
     @apply border-border;
     box-sizing: border-box;
@@ -92,13 +62,11 @@
     height: 100%;
     margin: 0;
     padding: 0;
-    transition: background-color 0.15s ease, color 0.15s ease;
   }
 
   #root {
     min-height: 100vh;
     width: 100%;
-    transition: background-color 0.15s ease;
   }
 }
 
@@ -107,31 +75,15 @@
     @apply backdrop-blur-md border rounded-xl shadow-xl;
     border-color: rgba(139, 92, 246, 0.2);
     background: rgba(255, 255, 255, 0.1);
-    transition: all 0.15s ease;
   }
   
   .quantum-glass:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(139, 92, 246, 0.15);
   }
-
-  .light .quantum-glass {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(139, 92, 246, 0.25);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  }
-
-  .light .quantum-glass:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-  }
   
   .neural-border {
     border: 1px solid rgba(139, 92, 246, 0.3);
-  }
-
-  .light .neural-border {
-    border-color: rgba(139, 92, 246, 0.4);
   }
   
   .holographic-text {
@@ -142,7 +94,6 @@
   .energy-button {
     @apply relative overflow-hidden text-white font-semibold;
     background: linear-gradient(135deg, #8B5CF6, #06B6D4);
-    transition: all 0.15s ease;
   }
   
   .energy-button:hover {
@@ -154,31 +105,14 @@
     @apply backdrop-blur-md border rounded-xl shadow-lg;
     border-color: rgba(139, 92, 246, 0.2);
     background: rgba(255, 255, 255, 0.1);
-    transition: all 0.15s ease;
-  }
-
-  .light .glass-panel {
-    background: rgba(255, 255, 255, 0.95);
-    border-color: rgba(139, 92, 246, 0.3);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   }
 
   .neon-glow {
     box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
-    transition: box-shadow 0.15s ease;
   }
 
   .neon-glow:hover {
     box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
-  }
-
-  .light .neon-glow {
-    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
-  }
-
-  .light .neon-glow:hover {
-    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
   }
 
   .heading {
@@ -187,39 +121,6 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-  }
-
-  .theme-transition {
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .theme-text-transition {
-    transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .bg-background {
-    background-color: hsl(var(--background));
-  }
-
-  .bg-card {
-    background-color: hsl(var(--card));
-  }
-
-  /* Light theme specific improvements */
-  .light section {
-    background-color: hsl(var(--background));
-  }
-
-  .light .text-axion-gray {
-    color: hsl(60 60 60);
-  }
-
-  .light .text-axion-blue {
-    color: hsl(188 85% 45%);
-  }
-
-  .light .text-foreground {
-    color: hsl(var(--foreground));
   }
 }
 

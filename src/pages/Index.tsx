@@ -6,23 +6,15 @@ import Showcase from "@/sections/Showcase";
 import ProjectSpotlight from "@/sections/ProjectSpotlight";
 import EmailSignup from "@/sections/EmailSignup";
 import Footer from "@/sections/Footer";
-import { useTheme } from "@/components/ThemeProvider";
-import { triggerPulseAnimation, createParticleExplosion } from "@/lib/animations";
+import { createParticleExplosion } from "@/lib/animations";
 
 const Index = () => {
-  const { theme, setTheme } = useTheme();
-  
-  // Handle key press for theme toggle
+  // Handle key press for particle effects only
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Toggle theme with Alt+T
+      // Create particle explosion with Alt+T for fun
       if (e.altKey && e.key === 't') {
-        const newTheme = theme === "dark" ? "light" : "dark";
-        setTheme(newTheme);
-        triggerPulseAnimation(newTheme);
-        
-        // Create particle explosion in the center of the screen
-        createParticleExplosion(window.innerWidth / 2, window.innerHeight / 2, 20); // Reduced particle count
+        createParticleExplosion(window.innerWidth / 2, window.innerHeight / 2, 20);
       }
     };
     
@@ -31,10 +23,10 @@ const Index = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [theme, setTheme]);
+  }, []);
   
   return (
-    <div className="min-h-screen theme-transition animated-background-pulse">
+    <div className="min-h-screen">
       <Hero />
       <Mission />
       <Showcase />
