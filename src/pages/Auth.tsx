@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate, Navigate, Link } from 'react-router-dom';
+import { useNavigate, Navigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +17,7 @@ import { EnterpriseOnboarding } from '@/components/auth/EnterpriseOnboarding';
 export default function Auth() {
   const { signIn, signUp, signInWithGoogle, signInWithGithub, isAuthenticated, user, profile } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,24 +25,34 @@ export default function Auth() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const { theme } = useTheme();
   
-  // Logo source based on theme
-  const logoSrc = theme === "dark" 
-    ? "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png"
-    : "/lovable-uploads/b799f614-ce3b-419b-be33-2205f81930dc.png";
+  // Get redirect URL from query params
+  const redirectTo = searchParams.get('redirect_to');
   
-  // Check if user needs onboarding
+  // Logo source - always use dark theme logo
+  const logoSrc = "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png";
+  
+  // Check if user needs onboarding or should be redirected
   useEffect(() => {
     if (isAuthenticated && user && profile) {
       if (!profile.profile_completed) {
         setShowOnboarding(true);
       } else {
-        navigate('/');
+        // If there's a redirect URL, use it; otherwise go to home
+        if (redirectTo) {
+          window.location.href = redirectTo;
+        } else {
+          navigate('/');
+        }
       }
     }
-  }, [isAuthenticated, user, profile, navigate]);
+  }, [isAuthenticated, user, profile, navigate, redirectTo]);
   
   // Redirect if already authenticated and profile is complete
   if (isAuthenticated && profile?.profile_completed) {
+    if (redirectTo) {
+      window.location.href = redirectTo;
+      return null;
+    }
     return <Navigate to="/" />;
   }
   
@@ -143,11 +154,15 @@ export default function Auth() {
 
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
-    navigate('/');
+    if (redirectTo) {
+      window.location.href = redirectTo;
+    } else {
+      navigate('/');
+    }
   };
   
   return (
-    <div className="min-h-screen bg-background theme-transition">
+    <div className="min-h-screen bg-background">
       <header className="w-full p-4 md:p-6 flex justify-between items-center z-10">
         <Link to="/" className="flex items-center gap-2 text-foreground hover:text-quantum-cyan transition-colors">
           <ArrowLeft className="h-5 w-5" />
@@ -160,7 +175,7 @@ export default function Auth() {
         <Card className="w-full max-w-md quantum-glass neural-border">
           <CardHeader className="text-center space-y-2">
             <div className="flex justify-center mb-2">
-              <img src={logoSrc} alt="AxionLabs Logo" className="h-12 theme-transition" />
+              <img src={logoSrc} alt="AxionLabs Logo" className="h-12" />
             </div>
             <CardTitle className="heading text-2xl">
               {showOnboarding ? 'Welcome to AxionLabs' : 'Welcome to AxionLabs'}

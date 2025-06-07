@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      linked_accounts: {
+        Row: {
+          created_at: string | null
+          external_user_id: string
+          id: string
+          supabase_user_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          external_user_id: string
+          id?: string
+          supabase_user_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          external_user_id?: string
+          id?: string
+          supabase_user_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       notification_signups: {
         Row: {
           created_at: string
