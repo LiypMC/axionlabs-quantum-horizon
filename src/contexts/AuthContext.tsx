@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { Session, User, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { manualSignUp, manualSignIn } from '@/lib/manual-auth';
 import { toast } from 'sonner';
 import { Tables } from '@/integrations/supabase/types';
 
@@ -133,13 +134,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       return { error: null };
     } catch (err) {
-      console.error('Network error during signUp:', err);
-      toast.error('Network error. Please check your connection and try again.');
-      const networkError = {
-        message: 'Network error. Please check your connection and try again.',
-        name: 'NetworkError'
-      } as any;
-      return { error: networkError };
+      console.error('Supabase signup failed, trying manual auth...', err);
+      
+      // Fallback to manual auth
+      try {
+        const { data, error } = await manualSignUp(email, password);
+        
+        if (error) {
+          return { error };
+        }
+        
+        toast.success('Account created successfully!', {
+          description: 'You can now sign in with your credentials'
+        });
+        
+        return { error: null };
+      } catch (manualErr) {
+        console.error('Manual signup also failed:', manualErr);
+        toast.error('Network error. Please check your connection and try again.');
+        const networkError = {
+          message: 'Network error. Please check your connection and try again.',
+          name: 'NetworkError'
+        } as any;
+        return { error: networkError };
+      }
     }
   };
   
@@ -162,13 +180,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       toast.success('Successfully signed in!');
       return { error: null };
     } catch (err) {
-      console.error('Network error during signIn:', err);
-      toast.error('Network error. Please check your connection and try again.');
-      const networkError = {
-        message: 'Network error. Please check your connection and try again.',
-        name: 'NetworkError'
-      } as any;
-      return { error: networkError };
+      console.error('Supabase signin failed, trying manual auth...', err);
+      
+      // Fallback to manual auth
+      try {
+        const { data, error } = await manualSignIn(email, password);
+        
+        if (error) {
+          return { error };
+        }
+        
+        // Manually set the session if manual auth worked
+        if (data && data.access_token) {
+          // Refresh the auth state
+          window.location.reload();
+        }
+        
+        toast.success('Successfully signed in!');
+        return { error: null };
+      } catch (manualErr) {
+        console.error('Manual signin also failed:', manualErr);
+        toast.error('Network error. Please check your connection and try again.');
+        const networkError = {
+          message: 'Network error. Please check your connection and try again.',
+          name: 'NetworkError'
+        } as any;
+        return { error: networkError };
+      }
     }
   };
   
