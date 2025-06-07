@@ -10,6 +10,7 @@ export const manualSignUp = async (email: string, password: string) => {
         'Content-Type': 'application/json',
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer': 'return=minimal',
       },
       body: JSON.stringify({
         email,
@@ -17,7 +18,9 @@ export const manualSignUp = async (email: string, password: string) => {
       }),
     });
 
+    console.log('Manual signup response status:', response.status);
     const data = await response.json();
+    console.log('Manual signup response data:', data);
     
     if (!response.ok) {
       return { error: data.error || { message: data.msg || 'Signup failed' } };
