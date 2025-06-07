@@ -1,16 +1,17 @@
-// Manual auth implementation using fetch as fallback
-const SUPABASE_URL = "https://ikzgrktaaawjiaqnxwfx.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlremdya3RhYWF3amlhcW54d2Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4OTA4NzksImV4cCI6MjA2MjQ2Njg3OX0.uQXjaE2ihXCJkSZWRcvm0hm3xltGxXCT4upzRMRQHr0";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '@/integrations/supabase/client';
 
 export const manualSignUp = async (email: string, password: string) => {
   try {
-    const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+    // Try with URL param first
+    const urlWithApiKey = `${SUPABASE_URL}/auth/v1/signup?apikey=${encodeURIComponent(SUPABASE_ANON_KEY)}`;
+    
+    const response = await fetch(urlWithApiKey, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Prefer': 'return=minimal',
+        'X-Supabase-Api-Version': '2024-01-01',
       },
       body: JSON.stringify({
         email,
@@ -35,12 +36,16 @@ export const manualSignUp = async (email: string, password: string) => {
 
 export const manualSignIn = async (email: string, password: string) => {
   try {
-    const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+    // Try with URL param first
+    const urlWithApiKey = `${SUPABASE_URL}/auth/v1/token?grant_type=password&apikey=${encodeURIComponent(SUPABASE_ANON_KEY)}`;
+    
+    const response = await fetch(urlWithApiKey, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'X-Supabase-Api-Version': '2024-01-01',
       },
       body: JSON.stringify({
         email,
@@ -48,7 +53,9 @@ export const manualSignIn = async (email: string, password: string) => {
       }),
     });
 
+    console.log('Manual signin response status:', response.status);
     const data = await response.json();
+    console.log('Manual signin response data:', data);
     
     if (!response.ok) {
       return { error: data.error || { message: data.msg || 'Signin failed' } };

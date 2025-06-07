@@ -10,57 +10,60 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Handle OAuth callback - Supabase will automatically detect and parse the hash
-        const { data, error } = await supabase.auth.getSession();
+        console.log('Auth callback started, URL:', window.location.href);
+        console.log('URL hash:', window.location.hash);
+        console.log('URL search:', window.location.search);
         
-        if (error) {
-          console.error('Auth callback error:', error);
-          toast.error('Authentication failed. Please try again.');
-          navigate('/auth');
-          return;
-        }
-
-        if (data.session && data.session.user) {
-          const user = data.session.user;
+        // First, try to get the session from URL hash/params (OAuth callback)
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        
+        console.log('Initial session check:', { sessionData, sessionError });
+        
+        // If no session yet, check if we have OAuth tokens in URL
+        if (!sessionData.session || sessionError) {
+          console.log('No session found, checking for OAuth tokens in URL...');
           
-          // Check if user has a profile
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', user.id)
-            .single();
-
-          if (profileError && profileError.code === 'PGRST116') {
-            // Profile doesn't exist, create one
-            const { error: createError } = await supabase
-              .from('profiles')
-              .insert({
-                id: user.id,
-                full_name: user.user_metadata?.full_name || 
-                          user.user_metadata?.name || null,
-                avatar_url: user.user_metadata?.avatar_url || 
-                           user.user_metadata?.picture || null,
-                profile_completed: false,
-                updated_at: new Date().toISOString(),
-              });
-
-            if (createError) {
-              console.error('Error creating profile:', createError);
+          // Check for OAuth tokens in URL hash
+          const hashParams = new URLSearchParams(window.location.hash.substring(1));
+          const accessToken = hashParams.get('access_token');
+          const refreshToken = hashParams.get('refresh_token');
+          
+          console.log('OAuth tokens from hash:', { accessToken: !!accessToken, refreshToken: !!refreshToken });
+          
+          if (accessToken && refreshToken) {
+            console.log('Setting session from OAuth tokens...');
+            
+            const { data: newSessionData, error: setSessionError } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+            
+            console.log('Set session result:', { newSessionData, setSessionError });
+            
+            if (setSessionError) {
+              console.error('Error setting session:', setSessionError);
+              toast.error('Authentication failed. Please try again.');
+              navigate('/auth');
+              return;
+            }
+            
+            // Use the new session data
+            if (newSessionData.session && newSessionData.session.user) {
+              await handleSuccessfulAuth(newSessionData.session.user);
+              return;
             }
           }
-
-          toast.success('Successfully signed in!');
-          
-          // Clear the URL hash to clean up the redirect
-          window.history.replaceState({}, document.title, window.location.pathname);
-          
-          // Redirect to home
-          navigate('/');
-        } else {
-          // No session, redirect to auth
-          console.log('No session found in callback');
-          navigate('/auth');
+        } else if (sessionData.session && sessionData.session.user) {
+          console.log('Existing session found');
+          await handleSuccessfulAuth(sessionData.session.user);
+          return;
         }
+        
+        // If we get here, no valid session was found
+        console.log('No valid session found, redirecting to auth');
+        toast.error('Authentication failed. Please try again.');
+        navigate('/auth');
+        
       } catch (error) {
         console.error('Unexpected error in auth callback:', error);
         toast.error('An unexpected error occurred. Please try again.');
@@ -70,8 +73,61 @@ export default function AuthCallback() {
       }
     };
 
+    const handleSuccessfulAuth = async (user: any) => {
+      try {
+        console.log('Handling successful auth for user:', user.id);
+        
+        // Check if user has a profile
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        console.log('Profile check:', { profile, profileError });
+
+        if (profileError && profileError.code === 'PGRST116') {
+          console.log('Creating new profile for user...');
+          // Profile doesn't exist, create one
+          const { error: createError } = await supabase
+            .from('profiles')
+            .insert({
+              id: user.id,
+              full_name: user.user_metadata?.full_name || 
+                        user.user_metadata?.name || null,
+              avatar_url: user.user_metadata?.avatar_url || 
+                         user.user_metadata?.picture || null,
+              profile_completed: false,
+              updated_at: new Date().toISOString(),
+            });
+
+          if (createError) {
+            console.error('Error creating profile:', createError);
+          } else {
+            console.log('Profile created successfully');
+          }
+        }
+
+        toast.success('Successfully signed in!');
+        
+        // Clear the URL hash to clean up the redirect
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        // Small delay before redirect to ensure everything is set
+        setTimeout(() => {
+          console.log('Redirecting to home page...');
+          navigate('/');
+        }, 500);
+        
+      } catch (error) {
+        console.error('Error in handleSuccessfulAuth:', error);
+        toast.error('Authentication completed but there was an error setting up your profile.');
+        navigate('/');
+      }
+    };
+
     // Add a small delay to ensure Supabase has processed the OAuth callback
-    const timer = setTimeout(handleAuthCallback, 100);
+    const timer = setTimeout(handleAuthCallback, 200);
     
     return () => clearTimeout(timer);
   }, [navigate]);

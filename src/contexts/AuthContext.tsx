@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { Session, User, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { manualSignUp, manualSignIn } from '@/lib/manual-auth';
 import { toast } from 'sonner';
 import { Tables } from '@/integrations/supabase/types';
 
@@ -31,7 +32,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // First set up the auth listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, currentSession) => {
+      (event, currentSession) => {
+        console.log('Auth state change:', event, currentSession?.user?.email);
+        
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
@@ -48,6 +51,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     // Then check for an existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      console.log('Initial session check:', currentSession?.user?.email);
+      
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
@@ -113,17 +118,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const signUp = async (email: string, password: string) => {
     try {
-      console.log('Attempting signup with Supabase...');
+      console.log('Attempting signup with Supabase client...');
       
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
       
-      console.log('Signup response:', { data, error });
+      console.log('Supabase signup response:', { data, error });
       
       if (error) {
-        console.error('SignUp error:', error);
+        console.error('Supabase SignUp error:', error);
         return { error };
       }
       
@@ -133,42 +138,81 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       return { error: null };
     } catch (err) {
-      console.error('Network error during signUp:', err);
-      toast.error('Network error. Please check your connection and try again.');
-      const networkError = {
-        message: 'Network error. Please check your connection and try again.',
-        name: 'NetworkError'
-      } as any;
-      return { error: networkError };
+      console.error('Supabase signup failed, trying manual fetch...', err);
+      
+      // Fallback to manual fetch with proper API key headers
+      try {
+        const { data, error } = await manualSignUp(email, password);
+        
+        if (error) {
+          console.error('Manual signup error:', error);
+          return { error };
+        }
+        
+        toast.success('Account created successfully!', {
+          description: 'You can now sign in with your credentials'
+        });
+        
+        return { error: null };
+      } catch (manualErr) {
+        console.error('Manual signup also failed:', manualErr);
+        toast.error('Network error. Please check your connection and try again.');
+        const networkError = {
+          message: 'Network error. Please check your connection and try again.',
+          name: 'NetworkError'
+        } as any;
+        return { error: networkError };
+      }
     }
   };
   
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('Attempting signin with Supabase...');
+      console.log('Attempting signin with Supabase client...');
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
-      console.log('Signin response:', { data, error });
+      console.log('Supabase signin response:', { data, error });
       
       if (error) {
-        console.error('SignIn error:', error);
+        console.error('Supabase SignIn error:', error);
         return { error };
       }
       
       toast.success('Successfully signed in!');
       return { error: null };
     } catch (err) {
-      console.error('Network error during signIn:', err);
-      toast.error('Network error. Please check your connection and try again.');
-      const networkError = {
-        message: 'Network error. Please check your connection and try again.',
-        name: 'NetworkError'
-      } as any;
-      return { error: networkError };
+      console.error('Supabase signin failed, trying manual fetch...', err);
+      
+      // Fallback to manual fetch with proper API key headers
+      try {
+        const { data, error } = await manualSignIn(email, password);
+        
+        if (error) {
+          console.error('Manual signin error:', error);
+          return { error };
+        }
+        
+        // If manual signin worked, refresh to update auth state
+        if (data && data.access_token) {
+          toast.success('Successfully signed in!');
+          // Refresh the page to pick up the new session
+          setTimeout(() => window.location.reload(), 500);
+        }
+        
+        return { error: null };
+      } catch (manualErr) {
+        console.error('Manual signin also failed:', manualErr);
+        toast.error('Network error. Please check your connection and try again.');
+        const networkError = {
+          message: 'Network error. Please check your connection and try again.',
+          name: 'NetworkError'
+        } as any;
+        return { error: networkError };
+      }
     }
   };
   
