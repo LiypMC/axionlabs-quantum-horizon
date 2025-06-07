@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { manualCreateProfile, manualCheckProfile } from '@/lib/manual-profile';
 import { toast } from 'sonner';
 
 export default function AuthCallback() {
@@ -77,35 +78,73 @@ export default function AuthCallback() {
       try {
         console.log('Handling successful auth for user:', user.id);
         
-        // Check if user has a profile
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-
-        console.log('Profile check:', { profile, profileError });
+        // Try Supabase client first, then manual fetch
+        let profile = null;
+        let profileError = null;
+        
+        try {
+          console.log('Checking profile with Supabase client...');
+          const { data: profileData, error: supabaseProfileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+          
+          profile = profileData;
+          profileError = supabaseProfileError;
+          console.log('Supabase profile check:', { profile, profileError });
+        } catch (err) {
+          console.error('Supabase profile check failed, trying manual fetch...', err);
+          
+          // Fallback to manual profile check
+          const { data: manualProfileData, error: manualProfileError } = await manualCheckProfile(user.id);
+          profile = manualProfileData;
+          profileError = manualProfileError;
+          console.log('Manual profile check:', { profile, profileError });
+        }
 
         if (profileError && profileError.code === 'PGRST116') {
           console.log('Creating new profile for user...');
-          // Profile doesn't exist, create one
-          const { error: createError } = await supabase
-            .from('profiles')
-            .insert({
-              id: user.id,
-              full_name: user.user_metadata?.full_name || 
-                        user.user_metadata?.name || null,
-              avatar_url: user.user_metadata?.avatar_url || 
-                         user.user_metadata?.picture || null,
-              profile_completed: false,
-              updated_at: new Date().toISOString(),
-            });
+          
+          const profileData = {
+            id: user.id,
+            full_name: user.user_metadata?.full_name || 
+                      user.user_metadata?.name || null,
+            avatar_url: user.user_metadata?.avatar_url || 
+                       user.user_metadata?.picture || null,
+            profile_completed: false,
+            updated_at: new Date().toISOString(),
+          };
+          
+          // Try Supabase client first, then manual
+          try {
+            const { error: createError } = await supabase
+              .from('profiles')
+              .insert(profileData);
 
-          if (createError) {
-            console.error('Error creating profile:', createError);
-          } else {
-            console.log('Profile created successfully');
+            if (createError) {
+              console.error('Supabase profile creation failed, trying manual...', createError);
+              
+              // Fallback to manual profile creation
+              const { error: manualCreateError } = await manualCreateProfile(profileData);
+              
+              if (manualCreateError) {
+                console.error('Manual profile creation also failed:', manualCreateError);
+                console.log('Continuing without profile creation...');
+              } else {
+                console.log('Manual profile creation successful');
+              }
+            } else {
+              console.log('Supabase profile creation successful');
+            }
+          } catch (profileCreateError) {
+            console.error('Profile creation failed completely, but continuing auth:', profileCreateError);
           }
+        } else if (profileError) {
+          console.error('Profile check error (non-404):', profileError);
+          // Don't fail auth for profile errors
+        } else {
+          console.log('Profile already exists');
         }
 
         toast.success('Successfully signed in!');
