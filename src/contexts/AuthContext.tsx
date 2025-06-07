@@ -61,30 +61,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [fetchUserProfile]);
+  }, []);
   
-  const fetchUserProfile = useCallback(async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-        
-      if (error && error.code === 'PGRST116') {
-        // Profile doesn't exist, create one
-        await createUserProfile(userId);
-      } else if (error) {
-        console.error('Error fetching user profile:', error);
-      } else {
-        setProfile(data);
-      }
-    } catch (error) {
-      console.error('Error in fetchUserProfile:', error);
-    }
-  }, [createUserProfile]);
-  
-  const createUserProfile = useCallback(async (userId: string) => {
+  const createUserProfile = async (userId: string) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -109,7 +88,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error('Error in createUserProfile:', error);
     }
-  }, []);
+  };
+  
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+        
+      if (error && error.code === 'PGRST116') {
+        // Profile doesn't exist, create one
+        await createUserProfile(userId);
+      } else if (error) {
+        console.error('Error fetching user profile:', error);
+      } else {
+        setProfile(data);
+      }
+    } catch (error) {
+      console.error('Error in fetchUserProfile:', error);
+    }
+  };
   
   const signUp = async (email: string, password: string) => {
     const { error } = await supabase.auth.signUp({
@@ -118,8 +118,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     
     if (!error) {
-      toast.success('Check your email for the confirmation link!', {
-        description: 'A sign-up confirmation link has been sent to your email'
+      toast.success('Account created successfully!', {
+        description: 'You can now sign in with your credentials'
       });
     }
     
@@ -146,13 +146,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         redirectTo: `${window.location.origin}/auth/callback`,
         queryParams: {
           access_type: 'offline',
-          prompt: 'consent',
+          prompt: 'select_account',
         },
       }
     });
     
     if (error) {
-      toast.error('Google sign-in failed');
+      toast.error('Google sign-in failed: ' + error.message);
     }
     
     return { error };
@@ -168,7 +168,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     
     if (error) {
-      toast.error('GitHub sign-in failed');
+      toast.error('GitHub sign-in failed: ' + error.message);
     }
     
     return { error };

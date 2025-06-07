@@ -10,7 +10,7 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Get the session from the URL hash
+        // Handle OAuth callback - Supabase will automatically detect and parse the hash
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -20,12 +20,14 @@ export default function AuthCallback() {
           return;
         }
 
-        if (data.session) {
+        if (data.session && data.session.user) {
+          const user = data.session.user;
+          
           // Check if user has a profile
           const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('*')
-            .eq('id', data.session.user.id)
+            .eq('id', user.id)
             .single();
 
           if (profileError && profileError.code === 'PGRST116') {
@@ -33,11 +35,11 @@ export default function AuthCallback() {
             const { error: createError } = await supabase
               .from('profiles')
               .insert({
-                id: data.session.user.id,
-                full_name: data.session.user.user_metadata?.full_name || 
-                          data.session.user.user_metadata?.name || null,
-                avatar_url: data.session.user.user_metadata?.avatar_url || 
-                           data.session.user.user_metadata?.picture || null,
+                id: user.id,
+                full_name: user.user_metadata?.full_name || 
+                          user.user_metadata?.name || null,
+                avatar_url: user.user_metadata?.avatar_url || 
+                           user.user_metadata?.picture || null,
                 profile_completed: false,
                 updated_at: new Date().toISOString(),
               });
@@ -49,20 +51,14 @@ export default function AuthCallback() {
 
           toast.success('Successfully signed in!');
           
-          // Redirect to home or intended destination
-          const redirectTo = new URLSearchParams(window.location.search).get('redirect_to');
-          if (redirectTo) {
-            window.location.href = redirectTo;
-          } else {
-            // If profile is incomplete, redirect to settings
-            if (!profile?.profile_completed) {
-              navigate('/settings?complete=true');
-            } else {
-              navigate('/');
-            }
-          }
+          // Clear the URL hash to clean up the redirect
+          window.history.replaceState({}, document.title, window.location.pathname);
+          
+          // Redirect to home
+          navigate('/');
         } else {
           // No session, redirect to auth
+          console.log('No session found in callback');
           navigate('/auth');
         }
       } catch (error) {
@@ -74,7 +70,10 @@ export default function AuthCallback() {
       }
     };
 
-    handleAuthCallback();
+    // Add a small delay to ensure Supabase has processed the OAuth callback
+    const timer = setTimeout(handleAuthCallback, 100);
+    
+    return () => clearTimeout(timer);
   }, [navigate]);
 
   if (!isProcessing) {

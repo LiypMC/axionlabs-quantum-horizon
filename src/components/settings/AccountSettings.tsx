@@ -24,12 +24,7 @@ export const AccountSettings = () => {
         throw new Error('User email not found');
       }
       
-      const { error } = await supabase.auth.resetPasswordForEmail(
-        user.email,
-        {
-          redirectTo: `${window.location.origin}/account/update`,
-        }
-      );
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email);
       
       if (error) {
         throw error;
