@@ -15,6 +15,18 @@ export default function AuthCallback() {
         console.log('URL hash:', window.location.hash);
         console.log('URL search:', window.location.search);
         
+        // Check for OAuth error first
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const error = hashParams.get('error');
+        const errorDescription = hashParams.get('error_description');
+        
+        if (error) {
+          console.error('OAuth error in URL:', { error, errorDescription });
+          toast.error(`Authentication failed: ${errorDescription || error}`);
+          navigate('/auth');
+          return;
+        }
+        
         // First, try to get the session from URL hash/params (OAuth callback)
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
@@ -25,7 +37,6 @@ export default function AuthCallback() {
           console.log('No session found, checking for OAuth tokens in URL...');
           
           // Check for OAuth tokens in URL hash
-          const hashParams = new URLSearchParams(window.location.hash.substring(1));
           const accessToken = hashParams.get('access_token');
           const refreshToken = hashParams.get('refresh_token');
           
@@ -168,7 +179,18 @@ export default function AuthCallback() {
     // Add a small delay to ensure Supabase has processed the OAuth callback
     const timer = setTimeout(handleAuthCallback, 200);
     
-    return () => clearTimeout(timer);
+    // Add a fallback timeout to prevent infinite loading
+    const fallbackTimer = setTimeout(() => {
+      console.warn('Auth callback taking too long, redirecting to auth page');
+      toast.error('Authentication is taking too long. Please try again.');
+      navigate('/auth');
+      setIsProcessing(false);
+    }, 10000); // 10 seconds fallback
+    
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(fallbackTimer);
+    };
   }, [navigate]);
 
   if (!isProcessing) {
