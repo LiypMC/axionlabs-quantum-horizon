@@ -113,10 +113,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const signUp = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      console.log('Attempting signup with Supabase...');
+      
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
+      
+      console.log('Signup response:', { data, error });
       
       if (error) {
         console.error('SignUp error:', error);
@@ -130,6 +134,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return { error: null };
     } catch (err) {
       console.error('Network error during signUp:', err);
+      toast.error('Network error. Please check your connection and try again.');
       const networkError = {
         message: 'Network error. Please check your connection and try again.',
         name: 'NetworkError'
@@ -140,10 +145,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('Attempting signin with Supabase...');
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
+      
+      console.log('Signin response:', { data, error });
       
       if (error) {
         console.error('SignIn error:', error);
@@ -154,6 +163,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return { error: null };
     } catch (err) {
       console.error('Network error during signIn:', err);
+      toast.error('Network error. Please check your connection and try again.');
       const networkError = {
         message: 'Network error. Please check your connection and try again.',
         name: 'NetworkError'
