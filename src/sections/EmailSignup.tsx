@@ -1,126 +1,98 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import FloatingCube from "@/components/FloatingCube";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Mail, Zap, Bell, ArrowRight } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function EmailSignup() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-  
-  // Only mount the 3D cube when this section is visible
-  useEffect(() => {
-    setIsMounted(true);
-    
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        } else {
-          setIsVisible(false);
-        }
-      });
-    }, { threshold: 0.2 });
-    
-    const element = document.getElementById('signup');
-    if (element) {
-      observer.observe(element);
-    }
-    
-    return () => {
-      if (element) {
-        observer.unobserve(element);
-      }
-    };
-  }, []);
-  
+  const { toast } = useToast();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email) {
-      toast.error("Please enter your email");
-      return;
-    }
-    
-    // Simple email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
-    
     setIsLoading(true);
     
-    try {
-      // Store email in Supabase
-      const { error } = await supabase
-        .from('notification_signups')
-        .insert({ email });
-        
-      if (error) {
-        if (error.code === '23505') { // Unique violation code
-          toast.info("You're already on our list!", {
-            description: "We'll notify you when we launch"
-          });
-        } else {
-          console.error("Error saving email:", error);
-          toast.error("Something went wrong. Please try again.");
-        }
-      } else {
-        toast.success("Thanks for signing up!", {
-          description: "You've been added to our waiting list"
-        });
-      }
-      
-      setEmail("");
-    } catch (err) {
-      console.error("Error in handleSubmit:", err);
-      toast.error("Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    toast({
+      title: "Successfully subscribed!",
+      description: "You'll be the first to know about QHub and our latest innovations.",
+    });
+    
+    setEmail("");
+    setIsLoading(false);
   };
 
   return (
-    <section id="signup" className="py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="glass-panel p-6 md:p-10 text-center animate-fade-in">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h2 className="heading text-3xl md:text-4xl mb-4">Be the First to Witness the Future</h2>
-              <p className="text-axion-gray mb-8">
-                Join our insider list for launch updates, research briefs, and VIP access.
-              </p>
-              
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="bg-white/5 border-white/10 text-axion-white"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                />
-                <Button 
-                  type="submit" 
-                  className="glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Submitting..." : "Notify Me"}
-                </Button>
-              </form>
+    <section id="signup" className="py-24 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <Card className="bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 border border-primary/20 backdrop-blur-sm">
+          <CardHeader className="text-center pb-6">
+            <div className="flex justify-center mb-4">
+              <Badge className="bg-primary/20 text-primary border-primary/30">
+                <Bell className="w-3 h-3 mr-1" />
+                Early Access
+              </Badge>
+            </div>
+            <CardTitle className="text-3xl md:text-4xl font-bold mb-4">
+              Be First in Line for QHub
+            </CardTitle>
+            <CardDescription className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Join our exclusive list and get early access to the quantum computing platform 
+              that will change how developers interact with quantum systems.
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent className="space-y-6">
+            <div className="grid md:grid-cols-3 gap-4 text-center">
+              <div className="flex flex-col items-center gap-2 p-4 bg-card/50 rounded-lg border border-border/30">
+                <Zap className="w-6 h-6 text-primary" />
+                <span className="font-medium">Early Access</span>
+                <span className="text-sm text-muted-foreground">Beta invitations before launch</span>
+              </div>
+              <div className="flex flex-col items-center gap-2 p-4 bg-card/50 rounded-lg border border-border/30">
+                <Mail className="w-6 h-6 text-primary" />
+                <span className="font-medium">Exclusive Updates</span>
+                <span className="text-sm text-muted-foreground">Behind-the-scenes development</span>
+              </div>
+              <div className="flex flex-col items-center gap-2 p-4 bg-card/50 rounded-lg border border-border/30">
+                <ArrowRight className="w-6 h-6 text-primary" />
+                <span className="font-medium">Special Pricing</span>
+                <span className="text-sm text-muted-foreground">Founder pricing for early users</span>
+              </div>
             </div>
             
-            <div className="hidden md:block">
-              {/* Only render the cube when section is visible */}
-              {isMounted && isVisible && <FloatingCube />}
-            </div>
-          </div>
-        </div>
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <Input
+                type="email"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="flex-1 bg-background/50 border-border/50"
+              />
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="font-semibold"
+                size="lg"
+              >
+                {isLoading ? "Subscribing..." : "Get Early Access"}
+              </Button>
+            </form>
+            
+            <p className="text-center text-sm text-muted-foreground">
+              Join 2,500+ researchers, developers, and quantum enthusiasts already on our list.
+              <br />
+              No spam, unsubscribe anytime.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut } from "lucide-react";
+import { Settings, LogOut, Calendar, Zap, Code, Cpu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,12 +15,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 export default function Hero() {
   const { theme } = useTheme();
   const { isAuthenticated, user, signOut } = useAuth();
   
-  // Updated logo sources - dark stays the same, light uses the new uploaded image
   const logoSrc = theme === "dark" 
     ? "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png"
     : "/lovable-uploads/b799f614-ce3b-419b-be33-2205f81930dc.png";
@@ -33,15 +33,15 @@ export default function Hero() {
   };
   
   return (
-    <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative theme-transition">
+    <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative">
       <AnimatedBackground />
       
-      <header className="w-full absolute top-0 left-0 right-0 flex justify-between items-center p-4 md:p-6 z-10 theme-transition">
+      <header className="w-full absolute top-0 left-0 right-0 flex justify-between items-center p-6 z-10">
         <div className="flex items-center gap-4">
           <img
             src={logoSrc}
             alt="AxionLabs Logo"
-            className="h-12 md:h-16 theme-transition"
+            className="h-12 md:h-14"
           />
           <ThemeToggle className="ml-2" />
         </div>
@@ -50,18 +50,18 @@ export default function Hero() {
           {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar className="h-9 w-9 cursor-pointer hover:opacity-80 transition-opacity">
+                <Avatar className="h-10 w-10 cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all">
                   <AvatarImage src={user?.user_metadata?.avatar_url} />
-                  <AvatarFallback className="bg-axion-blue text-white">
+                  <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
                     {getUserInitials()}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 glass-panel">
-                <div className="p-2 text-sm">
-                  <p className="font-medium">{user?.email}</p>
+              <DropdownMenuContent align="end" className="w-56 bg-card/95 backdrop-blur-sm border border-border/50">
+                <div className="p-3 border-b border-border/50">
+                  <p className="font-medium text-sm">{user?.email}</p>
+                  <p className="text-xs text-muted-foreground">AxionLabs Account</p>
                 </div>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link to="/settings" className="flex items-center cursor-pointer">
                     <Settings className="mr-2 h-4 w-4" />
@@ -69,7 +69,7 @@ export default function Hero() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={signOut} className="flex items-center cursor-pointer">
+                <DropdownMenuItem onClick={signOut} className="flex items-center cursor-pointer text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign Out
                 </DropdownMenuItem>
@@ -80,39 +80,78 @@ export default function Hero() {
               as={Link} 
               to="/auth"
               size="sm"
-              className="glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
             >
               Sign In
             </Button>
           )}
         </div>
       </header>
-      
-      <div className="text-center max-w-4xl mx-auto z-10 space-y-8">
-        <h1 className="heading text-4xl md:text-6xl lg:text-7xl tracking-wide theme-text-transition">
-          <span className="block">AxionLabs</span>
-          <span className="block text-2xl md:text-3xl lg:text-4xl mt-2 text-axion-blue">Pioneering Quantum Frontiers</span>
-        </h1>
-        
-        <p className="text-axion-gray text-lg md:text-xl max-w-2xl mx-auto theme-text-transition">
-          Coming Soon: The Next Generation of Particle Accelerators, AI-Driven Devices & Interstellar Research
-        </p>
-        
-        <div className="mt-10">
-          <NotifyButton variant="filled" className="text-lg py-6 px-8" />
+
+      {/* QHub Announcement Banner */}
+      <div className="w-full max-w-4xl mx-auto z-10 mb-8">
+        <div className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border border-primary/20 rounded-2xl p-6 backdrop-blur-sm">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
+              <Zap className="w-3 h-3 mr-1" />
+              Coming Soon
+            </Badge>
+            <Badge variant="outline" className="border-accent/30 text-accent">
+              <Calendar className="w-3 h-3 mr-1" />
+              June 20, 2025
+            </Badge>
+          </div>
+          
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              Introducing QHub
+            </h2>
+            <p className="text-lg md:text-xl text-muted-foreground mb-4 max-w-2xl mx-auto">
+              Run Python code on real quantum computers. The future of quantum development is here.
+            </p>
+            <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Code className="w-4 h-4" />
+                <span>Python Integration</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Cpu className="w-4 h-4" />
+                <span>Real Quantum Hardware</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
-      <div className="absolute bottom-10 left-0 right-0 flex justify-center">
+      <div className="text-center max-w-5xl mx-auto z-10 space-y-8">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
+          <span className="block bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
+            AxionLabs
+          </span>
+          <span className="block text-2xl md:text-3xl lg:text-4xl mt-4 text-primary font-semibold">
+            Pioneering Quantum Frontiers
+          </span>
+        </h1>
+        
+        <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          Advancing particle physics, quantum computing, and breakthrough technologies that shape tomorrow's world.
+        </p>
+        
+        <div className="mt-12">
+          <NotifyButton variant="filled" className="text-lg py-6 px-10 font-semibold" />
+        </div>
+      </div>
+      
+      <div className="absolute bottom-8 left-0 right-0 flex justify-center">
         <a 
           href="#mission" 
-          className="text-axion-blue hover:text-foreground transition-colors animate-bounce"
-          aria-label="Scroll down"
+          className="text-primary hover:text-primary/80 transition-colors animate-bounce"
+          aria-label="Scroll down to learn more"
         >
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
-            width="24" 
-            height="24" 
+            width="28" 
+            height="28" 
             viewBox="0 0 24 24" 
             fill="none" 
             stroke="currentColor" 
