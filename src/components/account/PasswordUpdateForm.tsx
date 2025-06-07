@@ -15,7 +15,6 @@ export const PasswordUpdateForm = () => {
   const [isRecoveryMode, setIsRecoveryMode] = useState(false);
   
   useEffect(() => {
-    // Check if we are in recovery mode (from a password reset link)
     const hash = window.location.hash;
     if (hash && hash.includes('type=recovery')) {
       setIsRecoveryMode(true);
@@ -60,44 +59,49 @@ export const PasswordUpdateForm = () => {
   };
 
   return (
-    <form onSubmit={handleUpdatePassword} className="space-y-4">
+    <form onSubmit={handleUpdatePassword} className="space-y-6">
       {isRecoveryMode && (
-        <div className="p-4 bg-blue-500/10 rounded-md border border-blue-200 mb-4">
-          <p className="text-sm text-axion-blue font-medium">
+        <div className="p-4 bg-primary/10 rounded-lg border border-primary/20 mb-6">
+          <p className="text-sm text-primary font-medium">
             You're setting a new password via a recovery link. Please enter your new password below.
           </p>
         </div>
       )}
+      
       <div className="space-y-2">
-        <Label htmlFor="new-password">New Password</Label>
+        <Label htmlFor="new-password" className="text-foreground font-medium">New Password</Label>
         <Input 
           id="new-password" 
           type="password" 
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="bg-background/50"
+          className="h-12 bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20"
           required
           minLength={6}
+          placeholder="Enter your new password"
         />
-        <p className="text-xs text-axion-gray">Must be at least 6 characters</p>
+        <p className="text-xs text-muted-foreground">Must be at least 6 characters</p>
       </div>
+      
       <div className="space-y-2">
-        <Label htmlFor="confirm-password">Confirm New Password</Label>
+        <Label htmlFor="confirm-password" className="text-foreground font-medium">Confirm New Password</Label>
         <Input 
           id="confirm-password" 
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="bg-background/50"
+          className="h-12 bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20"
           required
+          placeholder="Confirm your new password"
         />
       </div>
+      
       <Button 
         type="submit" 
-        className="w-full glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
+        className="w-full h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold shadow-lg"
         disabled={loading}
       >
-        {loading ? 'Updating...' : 'Update Password'}
+        {loading ? 'Updating Password...' : 'Update Password'}
       </Button>
     </form>
   );

@@ -9,21 +9,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { ArrowLeft, Github, Mail, Shield, Zap, Cpu } from 'lucide-react';
-import { useTheme } from '@/components/ThemeProvider';
+import { ArrowLeft, Github, Shield, Zap, Cpu } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { EnterpriseOnboarding } from '@/components/auth/EnterpriseOnboarding';
 
 export default function Auth() {
-  const { signIn, signUp, signInWithGoogle, signInWithGithub, isAuthenticated, user, profile } = useAuth();
+  const { signIn, signUp, signInWithGoogle, signInWithGithub, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [resetPasswordMode, setResetPasswordMode] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const { theme } = useTheme();
   
   // Get redirect URL from query params
   const redirectTo = searchParams.get('redirect_to');
@@ -31,24 +28,20 @@ export default function Auth() {
   // Logo source - always use dark theme logo
   const logoSrc = "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png";
   
-  // Check if user needs onboarding or should be redirected
+  // Check if user is authenticated and redirect
   useEffect(() => {
-    if (isAuthenticated && user && profile) {
-      if (!profile.profile_completed) {
-        setShowOnboarding(true);
+    if (isAuthenticated && user) {
+      // If there's a redirect URL, use it; otherwise go to home
+      if (redirectTo) {
+        window.location.href = redirectTo;
       } else {
-        // If there's a redirect URL, use it; otherwise go to home
-        if (redirectTo) {
-          window.location.href = redirectTo;
-        } else {
-          navigate('/');
-        }
+        navigate('/');
       }
     }
-  }, [isAuthenticated, user, profile, navigate, redirectTo]);
+  }, [isAuthenticated, user, navigate, redirectTo]);
   
-  // Redirect if already authenticated and profile is complete
-  if (isAuthenticated && profile?.profile_completed) {
+  // Redirect if already authenticated
+  if (isAuthenticated) {
     if (redirectTo) {
       window.location.href = redirectTo;
       return null;
@@ -84,6 +77,11 @@ export default function Auth() {
     
     if (password.length < 6) {
       toast.error('Password must be at least 6 characters');
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
       return;
     }
     
@@ -151,15 +149,6 @@ export default function Auth() {
       console.error('GitHub sign in error:', error);
     }
   };
-
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false);
-    if (redirectTo) {
-      window.location.href = redirectTo;
-    } else {
-      navigate('/');
-    }
-  };
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 relative overflow-hidden">
@@ -190,21 +179,21 @@ export default function Auth() {
               </div>
             </div>
             <CardTitle className="heading text-3xl">
-              {showOnboarding ? 'Welcome to AxionLabs' : 'Access Quantum Innovation'}
+              {resetPasswordMode 
+                ? 'Reset Password' 
+                : 'Access Quantum Innovation'}
             </CardTitle>
             <CardDescription className="text-lg text-muted-foreground">
-              {showOnboarding 
-                ? "Complete your quantum research profile" 
-                : resetPasswordMode 
-                  ? "Reset your quantum access credentials" 
-                  : "Join the future of quantum computing and AI research"}
+              {resetPasswordMode 
+                ? "Reset your quantum access credentials" 
+                : "Join the future of quantum computing and AI research"}
             </CardDescription>
             
-            {!showOnboarding && !resetPasswordMode && (
+            {!resetPasswordMode && (
               <div className="flex items-center justify-center gap-6 pt-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Shield className="h-4 w-4 text-primary" />
-                  <span>Enterprise Security</span>
+                  <span>Secure Access</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Zap className="h-4 w-4 text-accent" />
@@ -219,9 +208,7 @@ export default function Auth() {
           </CardHeader>
           
           <CardContent className="space-y-6">
-            {showOnboarding && user ? (
-              <EnterpriseOnboarding user={user} onComplete={handleOnboardingComplete} />
-            ) : resetPasswordMode ? (
+            {resetPasswordMode ? (
               <form onSubmit={handleResetPassword} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="reset-email" className="text-foreground font-medium">Email Address</Label>
@@ -356,6 +343,19 @@ export default function Auth() {
                           placeholder="••••••••"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
+                          minLength={6}
+                          className="h-12 bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="confirm-password" className="text-foreground font-medium">Confirm Password</Label>
+                        <Input 
+                          id="confirm-password" 
+                          type="password"
+                          placeholder="••••••••"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
                           minLength={6}
                           className="h-12 bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20"
                           required

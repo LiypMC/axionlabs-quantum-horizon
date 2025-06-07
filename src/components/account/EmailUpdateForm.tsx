@@ -16,13 +16,11 @@ export const EmailUpdateForm = ({ initialEmail = '' }: { initialEmail?: string }
   const [isVerificationMode, setIsVerificationMode] = useState(false);
   
   useEffect(() => {
-    // Check if we are in verification mode (from a verification link)
     const hash = window.location.hash;
     if (hash && hash.includes('type=email_change')) {
       setIsVerificationMode(true);
     }
     
-    // Update email state if user changes
     if (user?.email) {
       setEmail(user.email);
     }
@@ -39,14 +37,12 @@ export const EmailUpdateForm = ({ initialEmail = '' }: { initialEmail?: string }
     setLoading(true);
     
     try {
-      // In verification mode, the email update is already being processed
-      // We just need to redirect to a success page
-      toast.success('Email change successful!', {
+      toast.success('Email change verified!', {
         description: 'Your email has been updated successfully'
       });
       navigate('/settings');
     } catch (error: any) {
-      toast.error('Failed to update email');
+      toast.error('Failed to verify email change');
       console.error('Update email error:', error);
     } finally {
       setLoading(false);
@@ -54,32 +50,35 @@ export const EmailUpdateForm = ({ initialEmail = '' }: { initialEmail?: string }
   };
 
   return (
-    <form onSubmit={handleCompleteEmailUpdate} className="space-y-4">
+    <form onSubmit={handleCompleteEmailUpdate} className="space-y-6">
       {isVerificationMode ? (
-        <div className="p-4 bg-blue-500/10 rounded-md border border-blue-200 mb-4">
-          <p className="text-sm text-axion-blue font-medium">
+        <div className="p-4 bg-primary/10 rounded-lg border border-primary/20 mb-6">
+          <p className="text-sm text-primary font-medium">
             You're verifying your new email address. Click the button below to complete the process.
           </p>
         </div>
       ) : (
-        <p className="text-sm text-axion-gray">
-          Your verification link has been sent. Complete the process by clicking the link in your email.
-        </p>
+        <div className="p-4 bg-accent/10 rounded-lg border border-accent/20 mb-6">
+          <p className="text-sm text-accent font-medium">
+            Your verification link has been sent. Complete the process by clicking the link in your email.
+          </p>
+        </div>
       )}
       
       <div className="space-y-2">
-        <Label htmlFor="new-email">Email Address</Label>
+        <Label htmlFor="new-email" className="text-foreground font-medium">Email Address</Label>
         <Input 
           id="new-email" 
           type="email" 
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="bg-background/50"
+          className="h-12 bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20"
           readOnly={isVerificationMode}
           required
+          placeholder="your-email@company.com"
         />
         {isVerificationMode && (
-          <p className="text-sm text-axion-blue">
+          <p className="text-sm text-primary">
             Click the button below to complete your email change.
           </p>
         )}
@@ -88,10 +87,10 @@ export const EmailUpdateForm = ({ initialEmail = '' }: { initialEmail?: string }
       {isVerificationMode && (
         <Button 
           type="submit" 
-          className="w-full glass-panel border-axion-blue text-axion-white hover:bg-axion-blue/20 neon-glow"
+          className="w-full h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold shadow-lg"
           disabled={loading}
         >
-          {loading ? 'Processing...' : 'Complete Email Change'}
+          {loading ? 'Completing Update...' : 'Complete Email Change'}
         </Button>
       )}
     </form>

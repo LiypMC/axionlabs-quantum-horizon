@@ -20,7 +20,6 @@ export const AccountSettings = () => {
     try {
       setIsSendingReset(true);
       
-      // Check if we have the user email
       if (!user || !user.email) {
         throw new Error('User email not found');
       }
@@ -28,7 +27,7 @@ export const AccountSettings = () => {
       const { error } = await supabase.auth.resetPasswordForEmail(
         user.email,
         {
-          redirectTo: `${window.location.origin}/account/update#type=recovery`,
+          redirectTo: `${window.location.origin}/account/update`,
         }
       );
       
@@ -56,20 +55,20 @@ export const AccountSettings = () => {
         throw new Error('Please enter a new email address');
       }
       
-      // For email update, we need to provide the new email
+      if (newEmail === user?.email) {
+        throw new Error('New email cannot be the same as current email');
+      }
+      
       const { error } = await supabase.auth.updateUser({
-        email: newEmail,
-        options: {
-          emailRedirectTo: `${window.location.origin}/account/update#type=email_change`
-        }
-      } as any); // Type assertion to bypass TypeScript error
+        email: newEmail
+      });
       
       if (error) {
         throw error;
       }
       
       toast.success('Email verification sent', {
-        description: 'Check your new email for the verification link'
+        description: 'Check your new email address for the verification link'
       });
       
       setShowEmailInput(false);
@@ -93,7 +92,6 @@ export const AccountSettings = () => {
         throw error;
       }
       
-      // Sign out after successful account deletion
       await signOut();
       toast.success('Your account has been deleted');
       
@@ -106,15 +104,15 @@ export const AccountSettings = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Change Password</h3>
-        <p className="text-sm text-axion-gray">
+        <h3 className="text-lg font-medium text-foreground">Change Password</h3>
+        <p className="text-sm text-muted-foreground">
           We'll send a password reset link to your email address.
         </p>
         <Button 
           variant="outline" 
-          className="w-full"
+          className="w-full border-border/30 hover:bg-background/50"
           onClick={handleSendPasswordResetLink}
           disabled={isSendingReset}
         >
@@ -123,27 +121,31 @@ export const AccountSettings = () => {
       </div>
       
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Change Email</h3>
-        <p className="text-sm text-axion-gray">
+        <h3 className="text-lg font-medium text-foreground">Change Email</h3>
+        <p className="text-sm text-muted-foreground">
           Enter your new email address and we'll send a verification link.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Current email: <span className="font-medium">{user?.email}</span>
         </p>
         
         {showEmailInput ? (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="new-email">New Email Address</Label>
+              <Label htmlFor="new-email" className="text-foreground">New Email Address</Label>
               <Input
                 id="new-email"
                 type="email"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
                 placeholder="Enter your new email address"
+                className="bg-background/50 border-border/30 focus:border-primary"
               />
             </div>
             <div className="flex space-x-2">
               <Button 
                 variant="outline" 
-                className="flex-1"
+                className="flex-1 border-border/30 hover:bg-background/50"
                 onClick={handleSendEmailUpdateLink}
                 disabled={isSendingEmailChange || !newEmail}
               >
@@ -151,7 +153,11 @@ export const AccountSettings = () => {
               </Button>
               <Button 
                 variant="ghost" 
-                onClick={() => setShowEmailInput(false)}
+                onClick={() => {
+                  setShowEmailInput(false);
+                  setNewEmail('');
+                }}
+                className="hover:bg-background/30"
               >
                 Cancel
               </Button>
@@ -160,7 +166,7 @@ export const AccountSettings = () => {
         ) : (
           <Button 
             variant="outline" 
-            className="w-full"
+            className="w-full border-border/30 hover:bg-background/50"
             onClick={() => setShowEmailInput(true)}
           >
             Change Email Address
@@ -168,35 +174,35 @@ export const AccountSettings = () => {
         )}
       </div>
       
-      <div className="border-t border-axion-blue/20 pt-6">
-        <h3 className="text-lg font-medium mb-2">Account Management</h3>
-        <p className="text-sm text-axion-gray mb-4">
-          These actions will affect your account and cannot be undone easily.
+      <div className="border-t border-border/30 pt-6">
+        <h3 className="text-lg font-medium mb-2 text-foreground">Danger Zone</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          These actions will permanently affect your account and cannot be undone.
         </p>
         
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button 
               variant="destructive" 
-              className="w-full"
+              className="w-full bg-red-600/20 hover:bg-red-600/30 border border-red-600/30 text-red-400"
             >
               Delete Account
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent className="glass-panel border-red-600/30">
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
+              <AlertDialogTitle className="text-foreground">Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription className="text-muted-foreground">
                 This action cannot be undone. This will permanently delete your
                 account and remove your data from our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="border-border/30 hover:bg-background/50">Cancel</AlertDialogCancel>
               <AlertDialogAction 
                 onClick={handleDeleteAccount}
                 disabled={isDeleting}
-                className="bg-red-600 hover:bg-red-700"
+                className="bg-red-600 hover:bg-red-700 text-white"
               >
                 {isDeleting ? 'Deleting...' : 'Delete Account'}
               </AlertDialogAction>
