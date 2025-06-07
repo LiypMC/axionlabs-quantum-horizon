@@ -59,7 +59,7 @@ export default function Auth() {
       if (error) {
         toast.error(error.message);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error('Failed to sign in');
       console.error('Sign in error:', error);
     } finally {
@@ -93,7 +93,7 @@ export default function Auth() {
       if (error) {
         toast.error(error.message);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error('Failed to sign up');
       console.error('Sign up error:', error);
     } finally {
@@ -124,7 +124,7 @@ export default function Auth() {
         });
         setResetPasswordMode(false);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error('Failed to send reset email');
       console.error('Reset password error:', error);
     } finally {
@@ -135,7 +135,7 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-    } catch (error: any) {
+    } catch (error) {
       toast.error('Failed to sign in with Google');
       console.error('Google sign in error:', error);
     }
@@ -144,7 +144,7 @@ export default function Auth() {
   const handleGithubSignIn = async () => {
     try {
       await signInWithGithub();
-    } catch (error: any) {
+    } catch (error) {
       toast.error('Failed to sign in with GitHub');
       console.error('GitHub sign in error:', error);
     }

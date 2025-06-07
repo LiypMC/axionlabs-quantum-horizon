@@ -4,6 +4,7 @@
 export const API_ROUTES = {
   SESSION: '/api/auth/session',
   LINK_ACCOUNT: '/api/link-account',
+  PROFILE_COMPLETE: '/api/profile/complete',
 } as const;
 
 export const CORS_HEADERS = {
@@ -14,7 +15,7 @@ export const CORS_HEADERS = {
 } as const;
 
 // Helper function to create standardized API responses
-export const createApiResponse = (data: any, status: number = 200) => {
+export const createApiResponse = (data: Record<string, unknown>, status: number = 200) => {
   return new Response(JSON.stringify(data), {
     status,
     headers: CORS_HEADERS,
