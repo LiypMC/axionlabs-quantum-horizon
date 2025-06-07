@@ -112,66 +112,103 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
   
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    
-    if (!error) {
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      
+      if (error) {
+        console.error('SignUp error:', error);
+        return { error };
+      }
+      
       toast.success('Account created successfully!', {
         description: 'You can now sign in with your credentials'
       });
+      
+      return { error: null };
+    } catch (err) {
+      console.error('Network error during signUp:', err);
+      const networkError = {
+        message: 'Network error. Please check your connection and try again.',
+        name: 'NetworkError'
+      } as any;
+      return { error: networkError };
     }
-    
-    return { error };
   };
   
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    if (!error) {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) {
+        console.error('SignIn error:', error);
+        return { error };
+      }
+      
       toast.success('Successfully signed in!');
+      return { error: null };
+    } catch (err) {
+      console.error('Network error during signIn:', err);
+      const networkError = {
+        message: 'Network error. Please check your connection and try again.',
+        name: 'NetworkError'
+      } as any;
+      return { error: networkError };
     }
-    
-    return { error };
   };
   
   const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'select_account',
-        },
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'select_account',
+          },
+        }
+      });
+      
+      if (error) {
+        console.error('Google OAuth error:', error);
+        toast.error('Google sign-in failed: ' + error.message);
       }
-    });
-    
-    if (error) {
-      toast.error('Google sign-in failed: ' + error.message);
+      
+      return { error };
+    } catch (err) {
+      console.error('Network error during Google OAuth:', err);
+      toast.error('Network error. Please check your connection and try again.');
+      return { error: err };
     }
-    
-    return { error };
   };
   
   const signInWithGithub = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        scopes: 'read:user user:email',
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          scopes: 'read:user user:email',
+        }
+      });
+      
+      if (error) {
+        console.error('GitHub OAuth error:', error);
+        toast.error('GitHub sign-in failed: ' + error.message);
       }
-    });
-    
-    if (error) {
-      toast.error('GitHub sign-in failed: ' + error.message);
+      
+      return { error };
+    } catch (err) {
+      console.error('Network error during GitHub OAuth:', err);
+      toast.error('Network error. Please check your connection and try again.');
+      return { error: err };
     }
-    
-    return { error };
   };
   
   const signOut = async () => {
