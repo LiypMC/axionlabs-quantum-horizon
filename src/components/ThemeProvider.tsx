@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "dark";
+type Theme = "dark" | "light";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -20,17 +20,23 @@ export function ThemeProvider({
   defaultTheme = "dark",
   ...props
 }: ThemeProviderProps) {
-  const [theme] = useState<Theme>("dark");
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
 
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
-    root.classList.add("dark");
-  }, []);
+    root.classList.add(theme);
+    
+    if (theme === "dark") {
+      root.style.backgroundColor = "#000000";
+    } else {
+      root.style.backgroundColor = "#ffffff";
+    }
+  }, [theme]);
 
   const value = {
     theme,
-    setTheme: () => {}, // No-op function since we're locked to dark mode
+    setTheme,
   };
 
   return (

@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, Zap, Code, Cpu } from "lucide-react";
+import { Settings, LogOut, Zap, Code, Cpu, ChevronDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,10 +16,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 
 export default function Hero() {
   const { theme } = useTheme();
   const { isAuthenticated, user, signOut } = useAuth();
+  const [isAnnouncementOpen, setIsAnnouncementOpen] = useState(false);
   
   const logoSrc = "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png";
   
@@ -86,31 +88,42 @@ export default function Hero() {
         </div>
       </header>
 
-      {/* QHub Announcement Banner */}
+      {/* Compact QHub Announcement Banner */}
       <div className="w-full max-w-4xl mx-auto z-10 mb-8">
-        <div className="bg-white/5 border border-white/20 rounded-2xl p-8 backdrop-blur-sm">
-          <div className="flex items-center justify-center mb-6">
-            <Badge variant="outline" className="bg-black/50 text-white border-white/30 text-lg px-6 py-2">
-              <Zap className="w-4 h-4 mr-2" />
-              Coming Soon
-            </Badge>
-          </div>
+        <div className="bg-white/5 border border-white/20 rounded-lg backdrop-blur-sm overflow-hidden">
+          <button
+            onClick={() => setIsAnnouncementOpen(!isAnnouncementOpen)}
+            className="w-full p-4 flex items-center justify-between hover:bg-white/5 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className="bg-black/50 text-white border-white/30">
+                <Zap className="w-4 h-4 mr-2" />
+                Coming Soon
+              </Badge>
+              <span className="text-white font-semibold">QHub Platform - Revolutionary Quantum Computing</span>
+            </div>
+            <ChevronDown className={`w-5 h-5 text-white/70 transition-transform duration-300 ${isAnnouncementOpen ? 'rotate-180' : ''}`} />
+          </button>
           
-          <div className="text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-              Introducing QHub
-            </h2>
-            <p className="text-xl md:text-2xl text-white/70 mb-6 max-w-2xl mx-auto">
-              Run Python code on real quantum computers. The future of quantum development is here.
-            </p>
-            <div className="flex items-center justify-center gap-6 text-sm text-white/60">
-              <div className="flex items-center gap-2">
-                <Code className="w-4 h-4" />
-                <span>Python Integration</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Cpu className="w-4 h-4" />
-                <span>Real Quantum Hardware</span>
+          <div className={`transition-all duration-300 ease-in-out ${isAnnouncementOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
+            <div className="p-6 border-t border-white/10">
+              <div className="text-center">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3 text-white">
+                  Introducing QHub
+                </h2>
+                <p className="text-lg text-white/70 mb-4 max-w-2xl mx-auto">
+                  Run Python code on real quantum computers. The future of quantum development is here.
+                </p>
+                <div className="flex items-center justify-center gap-6 text-sm text-white/60">
+                  <div className="flex items-center gap-2">
+                    <Code className="w-4 h-4" />
+                    <span>Python Package Coming</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Cpu className="w-4 h-4" />
+                    <span>Web & Desktop App</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

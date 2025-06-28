@@ -2,7 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Code, Cpu, ArrowRight, Clock } from "lucide-react";
+import { Zap, Code, Cpu, ArrowRight, Clock, Play, Settings, Database, BarChart3 } from "lucide-react";
 
 export default function ProjectSpotlight() {
   return (
@@ -38,8 +38,8 @@ export default function ProjectSpotlight() {
                   <Code className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white">Python Integration</h3>
-                  <p className="text-white/60">Write quantum algorithms in familiar Python syntax</p>
+                  <h3 className="text-xl font-semibold text-white">Python Package Coming</h3>
+                  <p className="text-white/60">Install our Python package and start coding quantum algorithms</p>
                 </div>
               </div>
               
@@ -48,8 +48,8 @@ export default function ProjectSpotlight() {
                   <Cpu className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white">Real Quantum Hardware</h3>
-                  <p className="text-white/60">Execute on actual quantum processors, not simulators</p>
+                  <h3 className="text-xl font-semibold text-white">Web & Desktop App</h3>
+                  <p className="text-white/60">Access quantum computing through our intuitive applications</p>
                 </div>
               </div>
               
@@ -58,8 +58,8 @@ export default function ProjectSpotlight() {
                   <Zap className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white">Cloud-Native</h3>
-                  <p className="text-white/60">Access quantum computing power from anywhere</p>
+                  <h3 className="text-xl font-semibold text-white">Real Quantum Hardware</h3>
+                  <p className="text-white/60">Execute on actual quantum processors, not simulators</p>
                 </div>
               </div>
             </div>
@@ -84,24 +84,71 @@ export default function ProjectSpotlight() {
 
           <div className="relative">
             <Card className="bg-white/5 backdrop-blur-xl border border-white/20 shadow-2xl overflow-hidden">
-              <CardContent className="p-8">
-                <div className="bg-black/80 border border-white/20 rounded-xl p-6 font-mono text-sm">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                    <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                    <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                    <span className="ml-4 text-white/60">quantum_algorithm.py</span>
+              <CardContent className="p-0">
+                {/* App Interface Mockup */}
+                <div className="bg-black/90 border-b border-white/20">
+                  <div className="flex items-center justify-between p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-2">
+                        <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                        <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                        <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                      </div>
+                      <span className="text-white/70 text-sm font-medium">QHub Quantum IDE</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Settings className="w-4 h-4 text-white/60" />
+                      <Play className="w-4 h-4 text-green-400" />
+                    </div>
                   </div>
-                  <div className="space-y-2 text-sm">
-                    <div className="text-blue-300">import <span className="text-yellow-300">qhub</span></div>
-                    <div className="text-blue-300">from <span className="text-yellow-300">qiskit</span> import QuantumCircuit</div>
-                    <div className="text-white/40"># Create quantum circuit</div>
-                    <div className="text-white">qc = <span className="text-green-300">QuantumCircuit</span>(<span className="text-orange-300">2</span>)</div>
-                    <div className="text-white">qc.<span className="text-purple-300">h</span>(<span className="text-orange-300">0</span>)  <span className="text-white/40"># Hadamard gate</span></div>
-                    <div className="text-white">qc.<span className="text-purple-300">cx</span>(<span className="text-orange-300">0</span>, <span className="text-orange-300">1</span>)  <span className="text-white/40"># CNOT gate</span></div>
-                    <div className="text-white/40"># Execute on quantum computer</div>
-                    <div className="text-white">result = <span className="text-yellow-300">qhub</span>.<span className="text-purple-300">execute</span>(qc)</div>
-                    <div className="text-green-300">print(result.get_counts())</div>
+                </div>
+                
+                <div className="p-6 space-y-4">
+                  {/* App Sidebar */}
+                  <div className="flex gap-4">
+                    <div className="w-16 bg-white/10 rounded-lg p-3 space-y-3">
+                      <div className="w-6 h-6 bg-white/20 rounded"></div>
+                      <div className="w-6 h-6 bg-white/10 rounded"></div>
+                      <div className="w-6 h-6 bg-white/10 rounded"></div>
+                    </div>
+                    
+                    {/* Main Content Area */}
+                    <div className="flex-1 space-y-3">
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Database className="w-4 h-4 text-blue-400" />
+                          <span className="text-white text-sm font-medium">Quantum Circuit Builder</span>
+                        </div>
+                        <div className="grid grid-cols-4 gap-2">
+                          <div className="h-8 bg-white/20 rounded"></div>
+                          <div className="h-8 bg-white/20 rounded"></div>
+                          <div className="h-8 bg-white/10 rounded"></div>
+                          <div className="h-8 bg-white/5 rounded"></div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white/10 rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <BarChart3 className="w-4 h-4 text-green-400" />
+                          <span className="text-white text-sm font-medium">Quantum Results</span>
+                        </div>
+                        <div className="flex items-end gap-1 h-16">
+                          <div className="w-4 bg-green-400 rounded-t" style={{height: '60%'}}></div>
+                          <div className="w-4 bg-blue-400 rounded-t" style={{height: '40%'}}></div>
+                          <div className="w-4 bg-purple-400 rounded-t" style={{height: '80%'}}></div>
+                          <div className="w-4 bg-yellow-400 rounded-t" style={{height: '30%'}}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Status Bar */}
+                  <div className="bg-white/5 rounded-lg p-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                      <span className="text-white/70 text-xs">Connected to Quantum Computer</span>
+                    </div>
+                    <span className="text-white/50 text-xs">Runtime: 2.3s</span>
                   </div>
                 </div>
               </CardContent>
