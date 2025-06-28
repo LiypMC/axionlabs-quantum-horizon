@@ -29,20 +29,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
+    console.log('AuthProvider mounting, setting up auth listener...');
+    
     // Set up the auth listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         console.log('Auth state change:', event, currentSession?.user?.email);
+        console.log('Current session:', currentSession);
         
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
         if (currentSession?.user) {
+          console.log('User found, fetching profile for:', currentSession.user.id);
           // Fetch user profile without blocking
           setTimeout(() => {
             fetchUserProfile(currentSession.user.id);
           }, 0);
         } else {
+          console.log('No user found, setting profile to null');
           setProfile(null);
         }
         
@@ -153,6 +158,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const signIn = async (email: string, password: string) => {
     try {
+      console.log('Attempting to sign in with:', email);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -163,6 +169,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return { error };
       }
       
+      console.log('SignIn successful:', data);
       toast.success('Successfully signed in!');
       return { error: null };
     } catch (err) {

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -16,7 +16,12 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, isAuthenticated, loading } = useAuth();
+
+  // Redirect if already authenticated
+  if (!loading && isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +30,10 @@ const Auth = () => {
     setMessage("");
 
     try {
-      await signIn(email, password);
+      const { error } = await signIn(email, password);
+      if (error) {
+        setError(error.message || "Failed to sign in");
+      }
     } catch (error: any) {
       setError(error.message || "Failed to sign in");
     } finally {
@@ -40,8 +48,12 @@ const Auth = () => {
     setMessage("");
 
     try {
-      await signUp(email, password);
-      setMessage("Check your email for the confirmation link!");
+      const { error } = await signUp(email, password);
+      if (error) {
+        setError(error.message || "Failed to sign up");
+      } else {
+        setMessage("Check your email for the confirmation link!");
+      }
     } catch (error: any) {
       setError(error.message || "Failed to sign up");
     } finally {

@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, User, Settings as SettingsIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { AccountSettings } from "@/components/settings/AccountSettings";
 import { ProfileForm } from "@/components/settings/ProfileForm";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,6 +17,10 @@ const Settings = () => {
         <div className="text-white">Loading...</div>
       </div>
     );
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
   }
 
   return (
