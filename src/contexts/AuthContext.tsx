@@ -29,51 +29,50 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    console.log('AuthProvider mounting, setting up auth listener...');
-    
-    // Set up the auth listener first
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
-        console.log('Auth state change:', event, currentSession?.user?.email);
-        console.log('Current session:', currentSession);
-        
+    try {
+      // Set up the auth listener first
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (event, currentSession) => {
+          setSession(currentSession);
+          setUser(currentSession?.user ?? null);
+          
+          if (currentSession?.user) {
+            // Fetch user profile without blocking
+            setTimeout(() => {
+              fetchUserProfile(currentSession.user.id);
+            }, 0);
+          } else {
+            setProfile(null);
+          }
+          
+          setLoading(false);
+        }
+      );
+      
+      // Then check for an existing session
+      supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
         if (currentSession?.user) {
-          console.log('User found, fetching profile for:', currentSession.user.id);
-          // Fetch user profile without blocking
           setTimeout(() => {
             fetchUserProfile(currentSession.user.id);
           }, 0);
-        } else {
-          console.log('No user found, setting profile to null');
-          setProfile(null);
         }
         
         setLoading(false);
-      }
-    );
-    
-    // Then check for an existing session
-    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      console.log('Initial session check:', currentSession?.user?.email);
+      }).catch(() => {
+        // If auth fails, still set loading to false
+        setLoading(false);
+      });
       
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      
-      if (currentSession?.user) {
-        setTimeout(() => {
-          fetchUserProfile(currentSession.user.id);
-        }, 0);
-      }
-      
+      return () => {
+        subscription?.unsubscribe();
+      };
+    } catch (error) {
+      // If auth setup fails, still set loading to false
       setLoading(false);
-    });
-    
-    return () => {
-      subscription.unsubscribe();
-    };
+    }
   }, []);
   
   const createUserProfile = async (userId: string, userData?: any) => {
@@ -90,13 +89,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .select()
         .single();
         
-      if (error) {
-        console.error('Error creating user profile:', error);
-      } else {
+      if (!error && data) {
         setProfile(data);
       }
     } catch (error) {
-      console.error('Error in createUserProfile:', error);
+      // Silently handle profile creation errors
     }
   };
   
@@ -109,7 +106,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .maybeSingle();
         
       if (error) {
-        console.error('Error fetching user profile:', error);
+        // Silently handle profile fetch errors
+        return;
       } else if (!data) {
         // Profile doesn't exist, create one
         const { data: { user } } = await supabase.auth.getUser();
@@ -120,7 +118,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setProfile(data);
       }
     } catch (error) {
-      console.error('Error in fetchUserProfile:', error);
+      // Silently handle profile fetch errors
     }
   };
   
@@ -158,22 +156,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('Attempting to sign in with:', email);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
       if (error) {
-        console.error('SignIn error:', error);
         return { error };
       }
       
-      console.log('SignIn successful:', data);
       toast.success('Successfully signed in!');
       return { error: null };
     } catch (err) {
-      console.error('Signin failed:', err);
       const networkError = {
         message: 'Network error. Please check your connection and try again.',
         name: 'NetworkError'

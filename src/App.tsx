@@ -12,8 +12,15 @@ import AccountUpdate from "./pages/AccountUpdate";
 import Settings from "./pages/Settings";
 import ApiTest from "./pages/ApiTest";
 import NotFound from "./pages/NotFound";
+import { Suspense } from "react";
 
 const queryClient = new QueryClient();
+
+const LoadingFallback = () => (
+  <div className="min-h-screen bg-black flex items-center justify-center">
+    <div className="text-white">Loading...</div>
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -21,17 +28,19 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/account/update" element={<AccountUpdate />} />
-            <Route path="/api-test" element={<ApiTest />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <Suspense fallback={<LoadingFallback />}>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/account/update" element={<AccountUpdate />} />
+              <Route path="/api-test" element={<ApiTest />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </Suspense>
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
