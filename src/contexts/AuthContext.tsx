@@ -1,8 +1,7 @@
 
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Session, User, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { manualSignUp, manualSignIn } from '@/lib/manual-auth';
 import { toast } from 'sonner';
 import { Tables } from '@/integrations/supabase/types';
 
@@ -30,22 +29,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    // First set up the auth listener
+    // Set up the auth listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         console.log('Auth state change:', event, currentSession?.user?.email);
         
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
         if (currentSession?.user) {
-          // Fetch user profile using setTimeout to avoid deadlock
+          // Fetch user profile without blocking
           setTimeout(() => {
             fetchUserProfile(currentSession.user.id);
           }, 0);
         } else {
           setProfile(null);
         }
+        
+        setLoading(false);
       }
     );
     
@@ -57,7 +58,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(currentSession?.user ?? null);
       
       if (currentSession?.user) {
-        fetchUserProfile(currentSession.user.id);
+        setTimeout(() => {
+          fetchUserProfile(currentSession.user.id);
+        }, 0);
       }
       
       setLoading(false);
@@ -68,17 +71,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
   
-  const createUserProfile = async (userId: string) => {
+  const createUserProfile = async (userId: string, userData?: any) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      
       const { data, error } = await supabase
         .from('profiles')
         .insert({
           id: userId,
-          full_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
-          avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+          full_name: userData?.full_name || userData?.name || null,
+          avatar_url: userData?.avatar_url || userData?.picture || null,
           profile_completed: false,
           updated_at: new Date().toISOString(),
         })
@@ -101,13 +101,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
         
-      if (error && error.code === 'PGRST116') {
-        // Profile doesn't exist, create one
-        await createUserProfile(userId);
-      } else if (error) {
+      if (error) {
         console.error('Error fetching user profile:', error);
+      } else if (!data) {
+        // Profile doesn't exist, create one
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await createUserProfile(userId, user.user_metadata);
+        }
       } else {
         setProfile(data);
       }
@@ -118,101 +121,57 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const signUp = async (email: string, password: string) => {
     try {
-      console.log('Attempting signup with Supabase client...');
-      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`
+        }
       });
       
-      console.log('Supabase signup response:', { data, error });
-      
       if (error) {
-        console.error('Supabase SignUp error:', error);
+        console.error('SignUp error:', error);
         return { error };
       }
       
-      toast.success('Account created successfully!', {
-        description: 'You can now sign in with your credentials'
-      });
+      if (data?.user && !data.session) {
+        toast.success('Check your email for verification link!');
+      } else {
+        toast.success('Account created successfully!');
+      }
       
       return { error: null };
     } catch (err) {
-      console.error('Supabase signup failed, trying manual fetch...', err);
-      
-      // Fallback to manual fetch with proper API key headers
-      try {
-        const { data, error } = await manualSignUp(email, password);
-        
-        if (error) {
-          console.error('Manual signup error:', error);
-          return { error };
-        }
-        
-        toast.success('Account created successfully!', {
-          description: 'You can now sign in with your credentials'
-        });
-        
-        return { error: null };
-      } catch (manualErr) {
-        console.error('Manual signup also failed:', manualErr);
-        toast.error('Network error. Please check your connection and try again.');
-        const networkError = {
-          message: 'Network error. Please check your connection and try again.',
-          name: 'NetworkError'
-        } as any;
-        return { error: networkError };
-      }
+      console.error('Signup failed:', err);
+      const networkError = {
+        message: 'Network error. Please check your connection and try again.',
+        name: 'NetworkError'
+      } as AuthError;
+      return { error: networkError };
     }
   };
   
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('Attempting signin with Supabase client...');
-      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
-      console.log('Supabase signin response:', { data, error });
-      
       if (error) {
-        console.error('Supabase SignIn error:', error);
+        console.error('SignIn error:', error);
         return { error };
       }
       
       toast.success('Successfully signed in!');
       return { error: null };
     } catch (err) {
-      console.error('Supabase signin failed, trying manual fetch...', err);
-      
-      // Fallback to manual fetch with proper API key headers
-      try {
-        const { data, error } = await manualSignIn(email, password);
-        
-        if (error) {
-          console.error('Manual signin error:', error);
-          return { error };
-        }
-        
-        // If manual signin worked, refresh to update auth state
-        if (data && data.access_token) {
-          toast.success('Successfully signed in!');
-          // Refresh the page to pick up the new session
-          setTimeout(() => window.location.reload(), 500);
-        }
-        
-        return { error: null };
-      } catch (manualErr) {
-        console.error('Manual signin also failed:', manualErr);
-        toast.error('Network error. Please check your connection and try again.');
-        const networkError = {
-          message: 'Network error. Please check your connection and try again.',
-          name: 'NetworkError'
-        } as any;
-        return { error: networkError };
-      }
+      console.error('Signin failed:', err);
+      const networkError = {
+        message: 'Network error. Please check your connection and try again.',
+        name: 'NetworkError'
+      } as AuthError;
+      return { error: networkError };
     }
   };
   
@@ -238,7 +197,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (err) {
       console.error('Network error during Google OAuth:', err);
       toast.error('Network error. Please check your connection and try again.');
-      return { error: err };
+      return { error: err as AuthError };
     }
   };
   
@@ -261,7 +220,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (err) {
       console.error('Network error during GitHub OAuth:', err);
       toast.error('Network error. Please check your connection and try again.');
-      return { error: err };
+      return { error: err as AuthError };
     }
   };
   

@@ -1,13 +1,32 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Hero from "@/sections/Hero";
 import Mission from "@/sections/Mission";
 import Showcase from "@/sections/Showcase";
 import ProjectSpotlight from "@/sections/ProjectSpotlight";
 import EmailSignup from "@/sections/EmailSignup";
 import Footer from "@/sections/Footer";
+import SplashScreen from "@/components/SplashScreen";
 
 const Index = () => {
+  const [showSplash, setShowSplash] = useState(true);
+  
+  // Check if user has already seen the splash screen today
+  useEffect(() => {
+    const splashShownToday = localStorage.getItem('splashShownToday');
+    const today = new Date().toDateString();
+    
+    if (splashShownToday === today) {
+      setShowSplash(false);
+    }
+  }, []);
+  
+  const handleSplashContinue = () => {
+    const today = new Date().toDateString();
+    localStorage.setItem('splashShownToday', today);
+    setShowSplash(false);
+  };
+  
   // Minimal effects for better performance
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -23,6 +42,10 @@ const Index = () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+  
+  if (showSplash) {
+    return <SplashScreen onContinue={handleSplashContinue} />;
+  }
   
   return (
     <div className="min-h-screen">
