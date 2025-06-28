@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -59,17 +58,16 @@ export default function Settings() {
     !profile?.job_title;
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 relative overflow-hidden">
+    <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-neural-grid opacity-30" />
-      <div className="absolute inset-0 bg-energy-field" />
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5" />
       
       {/* Floating Elements */}
-      <div className="absolute top-20 right-10 w-20 h-20 bg-primary/10 rounded-full blur-xl animate-pulse" />
-      <div className="absolute bottom-20 left-10 w-32 h-32 bg-accent/10 rounded-full blur-xl animate-pulse delay-1000" />
+      <div className="absolute top-20 right-10 w-20 h-20 bg-white/5 rounded-full blur-xl animate-pulse" />
+      <div className="absolute bottom-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse delay-1000" />
       
-      <header className="relative z-10 w-full p-6 flex justify-between items-center border-b border-border/20 backdrop-blur-sm">
-        <Link to="/" className="flex items-center gap-3 text-foreground hover:text-primary transition-all duration-300 group">
+      <header className="relative z-10 w-full p-6 flex justify-between items-center border-b border-white/20 backdrop-blur-sm">
+        <Link to="/" className="flex items-center gap-3 text-white hover:text-white/80 transition-all duration-300 group">
           <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
           <span className="font-medium">Back to Home</span>
         </Link>
@@ -78,30 +76,30 @@ export default function Settings() {
           <div className="flex items-center gap-3">
             <img src={logoSrc} alt="AxionLabs" className="h-8" />
             <div className="text-right">
-              <p className="text-sm font-medium text-foreground">{fullName || username || 'Quantum Researcher'}</p>
-              <p className="text-xs text-muted-foreground">{user?.email}</p>
+              <p className="text-sm font-medium text-white">{fullName || username || 'Quantum Researcher'}</p>
+              <p className="text-xs text-white/60">{user?.email}</p>
             </div>
           </div>
         </div>
       </header>
       
       <div className="relative z-10 flex items-center justify-center min-h-[calc(100vh-120px)] p-6">
-        <Card className="w-full max-w-4xl glass-panel border-primary/20 shadow-2xl backdrop-blur-xl">
-          <CardHeader className="text-center space-y-4 pb-8 border-b border-border/20">
+        <Card className="w-full max-w-4xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-2xl">
+          <CardHeader className="text-center space-y-4 pb-8 border-b border-white/20">
             <div className="flex items-center justify-center gap-4">
               <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-2xl font-bold text-primary border-2 border-primary/30">
+                <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center text-2xl font-bold text-white border-2 border-white/20">
                   {getInitials()}
                 </div>
-                <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                  <SettingsIcon className="w-3 h-3 text-primary-foreground" />
+                <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                  <SettingsIcon className="w-3 h-3 text-black" />
                 </div>
               </div>
             </div>
             
             <div>
-              <CardTitle className="heading text-3xl mb-2">Quantum Profile Settings</CardTitle>
-              <CardDescription className="text-lg text-muted-foreground">
+              <CardTitle className="text-3xl font-bold text-white mb-2">Quantum Profile Settings</CardTitle>
+              <CardDescription className="text-lg text-white/70">
                 Manage your research profile and quantum platform preferences
               </CardDescription>
             </div>
@@ -114,16 +112,16 @@ export default function Settings() {
             )}
             
             <div className="flex items-center justify-center gap-8 pt-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Shield className="h-4 w-4 text-primary" />
+              <div className="flex items-center gap-2 text-sm text-white/60">
+                <Shield className="h-4 w-4 text-white" />
                 <span>Quantum Secure</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Cpu className="h-4 w-4 text-accent" />
+              <div className="flex items-center gap-2 text-sm text-white/60">
+                <Cpu className="h-4 w-4 text-white" />
                 <span>QHub Ready</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Zap className="h-4 w-4 text-primary" />
+              <div className="flex items-center gap-2 text-sm text-white/60">
+                <Zap className="h-4 w-4 text-white" />
                 <span>Premium Access</span>
               </div>
             </div>
@@ -131,11 +129,11 @@ export default function Settings() {
           
           <CardContent className="p-8">
             <Tabs defaultValue={isProfileIncomplete ? "complete" : "profile"} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8 bg-background/20 border border-border/30 h-12">
+              <TabsList className="grid w-full grid-cols-3 mb-8 bg-white/10 border border-white/20 h-12">
                 {isProfileIncomplete && (
                   <TabsTrigger 
                     value="complete" 
-                    className="data-[state=active]:bg-orange-400/20 data-[state=active]:text-orange-400 font-medium h-10 flex items-center gap-2"
+                    className="data-[state=active]:bg-orange-400/20 data-[state=active]:text-orange-400 font-medium h-10 flex items-center gap-2 text-white/70"
                   >
                     <AlertCircle className="h-4 w-4" />
                     Complete Profile
@@ -143,14 +141,14 @@ export default function Settings() {
                 )}
                 <TabsTrigger 
                   value="profile" 
-                  className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary font-medium h-10 flex items-center gap-2"
+                  className="data-[state=active]:bg-white/20 data-[state=active]:text-white font-medium h-10 flex items-center gap-2 text-white/70"
                 >
                   <User className="h-4 w-4" />
                   Research Profile
                 </TabsTrigger>
                 <TabsTrigger 
                   value="account" 
-                  className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary font-medium h-10 flex items-center gap-2"
+                  className="data-[state=active]:bg-white/20 data-[state=active]:text-white font-medium h-10 flex items-center gap-2 text-white/70"
                 >
                   <Shield className="h-4 w-4" />
                   Account Security
@@ -161,11 +159,11 @@ export default function Settings() {
                 <TabsContent value="complete" className="space-y-8">
                   <Card className="border-orange-400/30 bg-orange-400/5 backdrop-blur-sm">
                     <CardHeader>
-                      <CardTitle className="text-xl flex items-center gap-2">
+                      <CardTitle className="text-xl flex items-center gap-2 text-white">
                         <AlertCircle className="h-5 w-5 text-orange-400" />
                         Complete Your Profile
                       </CardTitle>
-                      <CardDescription>
+                      <CardDescription className="text-white/70">
                         Help us customize your AxionLabs experience by completing your professional profile
                       </CardDescription>
                     </CardHeader>
@@ -177,13 +175,13 @@ export default function Settings() {
               )}
               
               <TabsContent value="profile" className="space-y-8">
-                <Card className="border-border/30 bg-background/30 backdrop-blur-sm">
+                <Card className="border-white/20 bg-white/5 backdrop-blur-sm">
                   <CardHeader>
-                    <CardTitle className="text-xl flex items-center gap-2">
-                      <User className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-xl flex items-center gap-2 text-white">
+                      <User className="h-5 w-5 text-white" />
                       Profile Avatar
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-white/70">
                       Your avatar represents you across the AxionLabs quantum platform
                     </CardDescription>
                   </CardHeader>
@@ -196,13 +194,13 @@ export default function Settings() {
                   </CardContent>
                 </Card>
                 
-                <Card className="border-border/30 bg-background/30 backdrop-blur-sm">
+                <Card className="border-white/20 bg-white/5 backdrop-blur-sm">
                   <CardHeader>
-                    <CardTitle className="text-xl flex items-center gap-2">
-                      <Cpu className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-xl flex items-center gap-2 text-white">
+                      <Cpu className="h-5 w-5 text-white" />
                       Researcher Information
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-white/70">
                       Update your professional information for quantum research collaboration
                     </CardDescription>
                   </CardHeader>
@@ -217,13 +215,13 @@ export default function Settings() {
               </TabsContent>
               
               <TabsContent value="account" className="space-y-8">
-                <Card className="border-border/30 bg-background/30 backdrop-blur-sm">
+                <Card className="border-white/20 bg-white/5 backdrop-blur-sm">
                   <CardHeader>
-                    <CardTitle className="text-xl flex items-center gap-2">
-                      <Shield className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-xl flex items-center gap-2 text-white">
+                      <Shield className="h-5 w-5 text-white" />
                       Security Settings
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-white/70">
                       Manage your quantum platform security and authentication preferences
                     </CardDescription>
                   </CardHeader>

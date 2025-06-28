@@ -149,18 +149,17 @@ export default function Auth() {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 relative overflow-hidden">
+    <div className="min-h-screen bg-black relative overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-neural-grid opacity-30" />
-      <div className="absolute inset-0 bg-energy-field" />
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5" />
       
       {/* Floating Elements */}
-      <div className="absolute top-20 left-10 w-20 h-20 bg-primary/10 rounded-full blur-xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-32 h-32 bg-accent/10 rounded-full blur-xl animate-pulse delay-1000" />
-      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-primary/5 rounded-full blur-lg animate-pulse delay-500" />
+      <div className="absolute top-20 left-10 w-20 h-20 bg-white/5 rounded-full blur-xl animate-pulse" />
+      <div className="absolute bottom-20 right-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse delay-1000" />
+      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-white/5 rounded-full blur-lg animate-pulse delay-500" />
       
-      <header className="relative z-10 w-full p-6 flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-3 text-foreground hover:text-primary transition-all duration-300 group">
+      <header className="relative z-10 w-full p-6 flex justify-between items-center border-b border-white/20">
+        <Link to="/" className="flex items-center gap-3 text-white hover:text-white/80 transition-all duration-300 group">
           <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
           <span className="font-medium">Back to Home</span>
         </Link>
@@ -168,20 +167,20 @@ export default function Auth() {
       </header>
       
       <div className="relative z-10 flex items-center justify-center min-h-[calc(100vh-120px)] p-6">
-        <Card className="w-full max-w-lg glass-panel border-primary/20 shadow-2xl backdrop-blur-xl">
+        <Card className="w-full max-w-lg bg-white/5 backdrop-blur-xl border border-white/20 shadow-2xl">
           <CardHeader className="text-center space-y-4 pb-8">
             <div className="flex justify-center mb-4">
               <div className="relative">
                 <img src={logoSrc} alt="AxionLabs Logo" className="h-16 drop-shadow-lg" />
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl -z-10" />
+                <div className="absolute inset-0 bg-white/20 rounded-full blur-xl -z-10" />
               </div>
             </div>
-            <CardTitle className="heading text-3xl">
+            <CardTitle className="text-3xl font-bold text-white">
               {resetPasswordMode 
                 ? 'Reset Password' 
                 : 'Access Quantum Innovation'}
             </CardTitle>
-            <CardDescription className="text-lg text-muted-foreground">
+            <CardDescription className="text-lg text-white/70">
               {resetPasswordMode 
                 ? "Reset your quantum access credentials" 
                 : "Join the future of quantum computing and AI research"}
@@ -189,16 +188,16 @@ export default function Auth() {
             
             {!resetPasswordMode && (
               <div className="flex items-center justify-center gap-6 pt-4">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Shield className="h-4 w-4 text-primary" />
+                <div className="flex items-center gap-2 text-sm text-white/60">
+                  <Shield className="h-4 w-4 text-white" />
                   <span>Secure Access</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Zap className="h-4 w-4 text-accent" />
+                <div className="flex items-center gap-2 text-sm text-white/60">
+                  <Zap className="h-4 w-4 text-white" />
                   <span>Quantum Ready</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Cpu className="h-4 w-4 text-primary" />
+                <div className="flex items-center gap-2 text-sm text-white/60">
+                  <Cpu className="h-4 w-4 text-white" />
                   <span>AI Powered</span>
                 </div>
               </div>
@@ -209,20 +208,20 @@ export default function Auth() {
             {resetPasswordMode ? (
               <form onSubmit={handleResetPassword} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="reset-email" className="text-foreground font-medium">Email Address</Label>
+                  <Label htmlFor="reset-email" className="text-white font-medium">Email Address</Label>
                   <Input 
                     id="reset-email" 
                     type="email" 
                     placeholder="researcher@company.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20"
+                    className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
                     required
                   />
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold shadow-lg"
+                  className="w-full h-12 bg-white hover:bg-white/90 text-black font-semibold shadow-lg"
                   disabled={loading}
                 >
                   {loading ? 'Sending Reset Link...' : 'Send Reset Link'}
@@ -230,7 +229,7 @@ export default function Auth() {
                 <Button 
                   type="button"
                   variant="ghost" 
-                  className="w-full text-muted-foreground hover:text-primary"
+                  className="w-full text-white/70 hover:text-white hover:bg-white/10"
                   onClick={() => setResetPasswordMode(false)}
                 >
                   ← Back to Sign In
@@ -241,9 +240,10 @@ export default function Auth() {
                 <div className="space-y-4">
                   <Button 
                     type="button"
-                    className="w-full h-12 flex items-center justify-center gap-3 border border-border/50 bg-background/30 hover:bg-background/50 text-foreground backdrop-blur-sm font-medium"
+                    className="w-full h-12 flex items-center justify-center gap-3 border border-white/20 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm font-medium"
                     onClick={handleGoogleSignIn}
                   >
+                    {/* Google SVG icon */}
                     <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
                       <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                       <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -255,7 +255,7 @@ export default function Auth() {
                   
                   <Button 
                     type="button"
-                    className="w-full h-12 flex items-center justify-center gap-3 border border-border/50 bg-background/30 hover:bg-background/50 text-foreground backdrop-blur-sm font-medium"
+                    className="w-full h-12 flex items-center justify-center gap-3 border border-white/20 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm font-medium"
                     onClick={handleGithubSignIn}
                   >
                     <Github className="h-5 w-5" />
@@ -263,47 +263,47 @@ export default function Auth() {
                   </Button>
                   
                   <div className="relative flex items-center py-4">
-                    <div className="flex-grow border-t border-border/50" />
-                    <span className="mx-4 text-muted-foreground text-sm font-medium">OR CONTINUE WITH EMAIL</span>
-                    <div className="flex-grow border-t border-border/50" />
+                    <div className="flex-grow border-t border-white/20" />
+                    <span className="mx-4 text-white/60 text-sm font-medium">OR CONTINUE WITH EMAIL</span>
+                    <div className="flex-grow border-t border-white/20" />
                   </div>
                 </div>
                 
                 <Tabs defaultValue="signin" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-6 bg-background/20 border border-border/30">
-                    <TabsTrigger value="signin" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary font-medium">Sign In</TabsTrigger>
-                    <TabsTrigger value="signup" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary font-medium">Create Account</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/10 border border-white/20">
+                    <TabsTrigger value="signin" className="data-[state=active]:bg-white/20 data-[state=active]:text-white font-medium text-white/70">Sign In</TabsTrigger>
+                    <TabsTrigger value="signup" className="data-[state=active]:bg-white/20 data-[state=active]:text-white font-medium text-white/70">Create Account</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="signin" className="space-y-6">
                     <form onSubmit={handleSignIn} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="signin-email" className="text-foreground font-medium">Email Address</Label>
+                        <Label htmlFor="signin-email" className="text-white font-medium">Email Address</Label>
                         <Input 
                           id="signin-email" 
                           type="email" 
                           placeholder="researcher@company.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="h-12 bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20"
+                          className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="signin-password" className="text-foreground font-medium">Password</Label>
+                        <Label htmlFor="signin-password" className="text-white font-medium">Password</Label>
                         <Input 
                           id="signin-password" 
                           type="password"
                           placeholder="••••••••"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="h-12 bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20"
+                          className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
                           required
                         />
                       </div>
                       <Button 
                         type="submit" 
-                        className="w-full h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold shadow-lg"
+                        className="w-full h-12 bg-white hover:bg-white/90 text-black font-semibold shadow-lg"
                         disabled={loading}
                       >
                         {loading ? 'Signing In...' : 'Access Quantum Platform'}
@@ -311,7 +311,7 @@ export default function Auth() {
                       <Button 
                         type="button"
                         variant="link" 
-                        className="w-full text-primary hover:text-primary/80 font-medium"
+                        className="w-full text-white/70 hover:text-white font-medium"
                         onClick={() => setResetPasswordMode(true)}
                       >
                         Forgot your password?
@@ -322,19 +322,19 @@ export default function Auth() {
                   <TabsContent value="signup" className="space-y-6">
                     <form onSubmit={handleSignUp} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="signup-email" className="text-foreground font-medium">Work Email</Label>
+                        <Label htmlFor="signup-email" className="text-white font-medium">Work Email</Label>
                         <Input 
                           id="signup-email" 
                           type="email" 
                           placeholder="researcher@company.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="h-12 bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20"
+                          className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="signup-password" className="text-foreground font-medium">Password</Label>
+                        <Label htmlFor="signup-password" className="text-white font-medium">Password</Label>
                         <Input 
                           id="signup-password" 
                           type="password"
@@ -342,12 +342,12 @@ export default function Auth() {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           minLength={6}
-                          className="h-12 bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20"
+                          className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
                           required
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="confirm-password" className="text-foreground font-medium">Confirm Password</Label>
+                        <Label htmlFor="confirm-password" className="text-white font-medium">Confirm Password</Label>
                         <Input 
                           id="confirm-password" 
                           type="password"
@@ -355,14 +355,14 @@ export default function Auth() {
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           minLength={6}
-                          className="h-12 bg-background/50 border-border/50 focus:border-primary focus:ring-primary/20"
+                          className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
                           required
                         />
-                        <p className="text-xs text-muted-foreground">Must be at least 6 characters</p>
+                        <p className="text-xs text-white/50">Must be at least 6 characters</p>
                       </div>
                       <Button 
                         type="submit" 
-                        className="w-full h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold shadow-lg"
+                        className="w-full h-12 bg-white hover:bg-white/90 text-black font-semibold shadow-lg"
                         disabled={loading}
                       >
                         {loading ? 'Creating Account...' : 'Join Quantum Research'}
@@ -374,8 +374,8 @@ export default function Auth() {
             )}
           </CardContent>
           
-          <CardFooter className="justify-center pt-6 border-t border-border/20">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <CardFooter className="justify-center pt-6 border-t border-white/20">
+            <div className="flex items-center gap-2 text-sm text-white/60">
               <Shield className="h-4 w-4" />
               <p>Protected by AxionLabs quantum encryption</p>
             </div>

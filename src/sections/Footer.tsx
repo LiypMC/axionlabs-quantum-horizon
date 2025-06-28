@@ -3,10 +3,10 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
 export default function Footer() {
-  const logoSrc = "/lovable-uploads/8edfb44f-33b8-4c7b-a7d7-fcc91918d0c1.png";
+  const logoSrc = "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png";
 
   return (
-    <footer className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/50 border-t border-border/50">
+    <footer className="py-16 px-4 sm:px-6 lg:px-8 bg-black border-t border-white/20">
       <div className="max-w-7xl mx-auto">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           <div className="md:col-span-2">
@@ -16,24 +16,24 @@ export default function Footer() {
                 alt="Axions Laboratory Logo"
                 className="h-12 w-auto drop-shadow-sm"
               />
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-xs bg-black border-white/30 text-white">
                 Quantum Innovation Lab
               </Badge>
             </div>
-            <p className="text-muted-foreground mb-4 max-w-md">
+            <p className="text-white/60 mb-4 max-w-md">
               Pioneering the future of quantum computing, particle physics, and advanced technologies 
               that will revolutionize how we understand and interact with the universe.
             </p>
             <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary" className="text-xs">Quantum Computing</Badge>
-              <Badge variant="secondary" className="text-xs">Particle Physics</Badge>
-              <Badge variant="secondary" className="text-xs">AI Research</Badge>
+              <Badge variant="secondary" className="text-xs bg-white/10 text-white border-white/20">Quantum Computing</Badge>
+              <Badge variant="secondary" className="text-xs bg-white/10 text-white border-white/20">Particle Physics</Badge>
+              <Badge variant="secondary" className="text-xs bg-white/10 text-white border-white/20">AI Research</Badge>
             </div>
           </div>
           
           <div>
-            <h3 className="font-semibold mb-4">Research Areas</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h3 className="font-semibold mb-4 text-white">Research Areas</h3>
+            <ul className="space-y-2 text-sm text-white/60">
               <li>Quantum Computing</li>
               <li>Particle Accelerators</li>
               <li>Dark Matter Research</li>
@@ -43,9 +43,9 @@ export default function Footer() {
           </div>
           
           <div>
-            <h3 className="font-semibold mb-4">Products</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>QHub Platform <Badge variant="outline" className="ml-1 text-xs">Coming Soon</Badge></li>
+            <h3 className="font-semibold mb-4 text-white">Products</h3>
+            <ul className="space-y-2 text-sm text-white/60">
+              <li>QHub Platform <Badge variant="outline" className="ml-1 text-xs bg-black border-white/30 text-white">Coming Soon</Badge></li>
               <li>Quantum SDK</li>
               <li>Research Tools</li>
               <li>Educational Resources</li>
@@ -53,7 +53,7 @@ export default function Footer() {
           </div>
         </div>
         
-        <Separator className="mb-8" />
+        <Separator className="mb-8 bg-white/20" />
         
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex space-x-6">
@@ -65,7 +65,7 @@ export default function Footer() {
               <a
                 key={item.name}
                 href="#"
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className="text-white/60 hover:text-white transition-colors"
                 aria-label={item.name}
               >
                 <svg
@@ -85,7 +85,7 @@ export default function Footer() {
             ))}
           </div>
           
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-white/60">
             © 2025 Axions Laboratory. All rights reserved. | Advancing quantum frontiers since 2025.
           </div>
         </div>
