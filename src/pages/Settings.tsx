@@ -1,228 +1,68 @@
-import { useState, useEffect } from 'react';
-import { Navigate, Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, User, Settings as SettingsIcon, Shield, Cpu, Zap, AlertCircle } from 'lucide-react';
-import { ProfileForm } from '@/components/settings/ProfileForm';
-import { UserAvatar } from '@/components/settings/UserAvatar';
-import { AccountSettings } from '@/components/settings/AccountSettings';
-import { ProfileCompletion } from '@/components/settings/ProfileCompletion';
 
-export default function Settings() {
-  const { user, profile, isAuthenticated, loading } = useAuth();
-  const [username, setUsername] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
-  
-  useEffect(() => {
-    if (profile) {
-      setUsername(profile.username || '');
-      setFullName(profile.full_name || '');
-      setAvatarUrl(profile.avatar_url || '');
-    }
-  }, [profile]);
-  
-  // Redirect if not authenticated
-  if (!loading && !isAuthenticated) {
-    return <Navigate to="/auth" />;
-  }
-  
-  // Show loading state
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Loading quantum profile...</p>
-        </div>
-      </div>
-    );
-  }
-  
-  const getInitials = () => {
-    if (fullName) {
-      return fullName.split(' ').map(n => n[0]).join('').toUpperCase();
-    }
-    
-    return username?.substring(0, 2).toUpperCase() || user?.email?.substring(0, 2).toUpperCase() || 'AX';
-  };
-  
-  const logoSrc = "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png";
-  
-  // Check if profile is incomplete
-  const isProfileIncomplete = !profile?.profile_completed || 
-    !profile?.full_name || 
-    !profile?.company_name || 
-    !profile?.job_title;
-  
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, User, Settings as SettingsIcon } from "lucide-react";
+import { Link } from "react-router-dom";
+import { AccountSettings } from "@/components/settings/AccountSettings";
+import { ProfileForm } from "@/components/settings/ProfileForm";
+
+const Settings = () => {
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5" />
+    <div className="min-h-screen bg-black p-4 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-50" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1),transparent_50%)]" />
       
-      {/* Floating Elements */}
-      <div className="absolute top-20 right-10 w-20 h-20 bg-white/5 rounded-full blur-xl animate-pulse" />
-      <div className="absolute bottom-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse delay-1000" />
-      
-      <header className="relative z-10 w-full p-6 flex justify-between items-center border-b border-white/20 backdrop-blur-sm">
-        <Link to="/" className="flex items-center gap-3 text-white hover:text-white/80 transition-all duration-300 group">
-          <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-          <span className="font-medium">Back to Home</span>
-        </Link>
-        
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3">
-            <img src={logoSrc} alt="AxionLabs" className="h-8" />
-            <div className="text-right">
-              <p className="text-sm font-medium text-white">{fullName || username || 'Quantum Researcher'}</p>
-              <p className="text-xs text-white/60">{user?.email}</p>
-            </div>
-          </div>
+      {/* Back to Home */}
+      <Link 
+        to="/" 
+        className="fixed top-6 left-6 z-10 flex items-center gap-2 text-white/70 hover:text-white transition-colors glass-button px-4 py-2 rounded-full"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Home
+      </Link>
+
+      <div className="max-w-4xl mx-auto pt-20 relative z-10">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
+          <p className="text-white/70">Manage your account and preferences</p>
         </div>
-      </header>
-      
-      <div className="relative z-10 flex items-center justify-center min-h-[calc(100vh-120px)] p-6">
-        <Card className="w-full max-w-4xl bg-white/5 backdrop-blur-xl border border-white/20 shadow-2xl">
-          <CardHeader className="text-center space-y-4 pb-8 border-b border-white/20">
-            <div className="flex items-center justify-center gap-4">
-              <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center text-2xl font-bold text-white border-2 border-white/20">
-                  {getInitials()}
-                </div>
-                <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                  <SettingsIcon className="w-3 h-3 text-black" />
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <CardTitle className="text-3xl font-bold text-white mb-2">Quantum Profile Settings</CardTitle>
-              <CardDescription className="text-lg text-white/70">
-                Manage your research profile and quantum platform preferences
-              </CardDescription>
-            </div>
-            
-            {isProfileIncomplete && (
-              <div className="flex items-center justify-center gap-2 text-sm text-orange-400 bg-orange-400/10 border border-orange-400/20 rounded-lg px-4 py-2">
-                <AlertCircle className="h-4 w-4" />
-                <span>Complete your profile to unlock all features</span>
-              </div>
-            )}
-            
-            <div className="flex items-center justify-center gap-8 pt-4">
-              <div className="flex items-center gap-2 text-sm text-white/60">
-                <Shield className="h-4 w-4 text-white" />
-                <span>Quantum Secure</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-white/60">
-                <Cpu className="h-4 w-4 text-white" />
-                <span>QHub Ready</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-white/60">
-                <Zap className="h-4 w-4 text-white" />
-                <span>Premium Access</span>
-              </div>
-            </div>
-          </CardHeader>
-          
-          <CardContent className="p-8">
-            <Tabs defaultValue={isProfileIncomplete ? "complete" : "profile"} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-8 bg-white/10 border border-white/20 h-12">
-                {isProfileIncomplete && (
-                  <TabsTrigger 
-                    value="complete" 
-                    className="data-[state=active]:bg-orange-400/20 data-[state=active]:text-orange-400 font-medium h-10 flex items-center gap-2 text-white/70"
-                  >
-                    <AlertCircle className="h-4 w-4" />
-                    Complete Profile
-                  </TabsTrigger>
-                )}
-                <TabsTrigger 
-                  value="profile" 
-                  className="data-[state=active]:bg-white/20 data-[state=active]:text-white font-medium h-10 flex items-center gap-2 text-white/70"
-                >
-                  <User className="h-4 w-4" />
-                  Research Profile
+
+        <Card className="glass-card border-white/10 bg-black/80 backdrop-blur-xl">
+          <CardContent className="p-6">
+            <Tabs defaultValue="profile" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 bg-white/10 border border-white/20 mb-6">
+                <TabsTrigger value="profile" className="text-white data-[state=active]:bg-white data-[state=active]:text-black">
+                  <User className="w-4 h-4 mr-2" />
+                  Profile
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="account" 
-                  className="data-[state=active]:bg-white/20 data-[state=active]:text-white font-medium h-10 flex items-center gap-2 text-white/70"
-                >
-                  <Shield className="h-4 w-4" />
-                  Account Security
+                <TabsTrigger value="account" className="text-white data-[state=active]:bg-white data-[state=active]:text-black">
+                  <SettingsIcon className="w-4 h-4 mr-2" />
+                  Account
                 </TabsTrigger>
               </TabsList>
-              
-              {isProfileIncomplete && (
-                <TabsContent value="complete" className="space-y-8">
-                  <Card className="border-orange-400/30 bg-orange-400/5 backdrop-blur-sm">
-                    <CardHeader>
-                      <CardTitle className="text-xl flex items-center gap-2 text-white">
-                        <AlertCircle className="h-5 w-5 text-orange-400" />
-                        Complete Your Profile
-                      </CardTitle>
-                      <CardDescription className="text-white/70">
-                        Help us customize your AxionLabs experience by completing your professional profile
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ProfileCompletion user={user} />
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              )}
-              
-              <TabsContent value="profile" className="space-y-8">
-                <Card className="border-white/20 bg-white/5 backdrop-blur-sm">
+
+              <TabsContent value="profile" className="space-y-6">
+                <Card className="glass-card border-white/10 bg-white/5">
                   <CardHeader>
-                    <CardTitle className="text-xl flex items-center gap-2 text-white">
-                      <User className="h-5 w-5 text-white" />
-                      Profile Avatar
-                    </CardTitle>
+                    <CardTitle className="text-white">Profile Information</CardTitle>
                     <CardDescription className="text-white/70">
-                      Your avatar represents you across the AxionLabs quantum platform
+                      Update your personal information and preferences
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <UserAvatar 
-                      userId={user?.id} 
-                      avatarUrl={avatarUrl} 
-                      getInitials={getInitials} 
-                    />
-                  </CardContent>
-                </Card>
-                
-                <Card className="border-white/20 bg-white/5 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="text-xl flex items-center gap-2 text-white">
-                      <Cpu className="h-5 w-5 text-white" />
-                      Researcher Information
-                    </CardTitle>
-                    <CardDescription className="text-white/70">
-                      Update your professional information for quantum research collaboration
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ProfileForm 
-                      user={user} 
-                      initialUsername={username} 
-                      initialFullName={fullName} 
-                    />
+                    <ProfileForm />
                   </CardContent>
                 </Card>
               </TabsContent>
-              
-              <TabsContent value="account" className="space-y-8">
-                <Card className="border-white/20 bg-white/5 backdrop-blur-sm">
+
+              <TabsContent value="account" className="space-y-6">
+                <Card className="glass-card border-white/10 bg-white/5">
                   <CardHeader>
-                    <CardTitle className="text-xl flex items-center gap-2 text-white">
-                      <Shield className="h-5 w-5 text-white" />
-                      Security Settings
-                    </CardTitle>
+                    <CardTitle className="text-white">Account Settings</CardTitle>
                     <CardDescription className="text-white/70">
-                      Manage your quantum platform security and authentication preferences
+                      Manage your account security and preferences
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -236,4 +76,6 @@ export default function Settings() {
       </div>
     </div>
   );
-}
+};
+
+export default Settings;

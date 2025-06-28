@@ -1,387 +1,191 @@
 
-import { useState, useEffect } from 'react';
-import { useNavigate, Navigate, Link, useSearchParams } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from 'sonner';
-import { ArrowLeft, Github, Shield, Zap, Cpu } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
-export default function Auth() {
-  const { signIn, signUp, signInWithGoogle, signInWithGithub, isAuthenticated, user } = useAuth();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [resetPasswordMode, setResetPasswordMode] = useState(false);
-  
-  // Get redirect URL from query params
-  const redirectTo = searchParams.get('redirect_to');
-  
-  // Logo source - always use dark theme logo
-  const logoSrc = "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png";
-  
-  // Check if user is authenticated and redirect
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      // If there's a redirect URL, use it; otherwise go to home
-      if (redirectTo) {
-        window.location.href = redirectTo;
-      } else {
-        navigate('/');
-      }
-    }
-  }, [isAuthenticated, user, navigate, redirectTo]);
-  
-  // Redirect if already authenticated
-  if (isAuthenticated) {
-    if (redirectTo) {
-      window.location.href = redirectTo;
-      return null;
-    }
-    return <Navigate to="/" />;
-  }
-  
+const Auth = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const { signIn, signUp } = useAuth();
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    
+    setIsLoading(true);
+    setError("");
+    setMessage("");
+
     try {
-      const { error } = await signIn(email, password);
-      
-      if (error) {
-        toast.error(error.message);
-      }
-    } catch (error) {
-      toast.error('Failed to sign in');
-      console.error('Sign in error:', error);
+      await signIn(email, password);
+    } catch (error: any) {
+      setError(error.message || "Failed to sign in");
     } finally {
-      setLoading(false);
-    }
-  };
-  
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!email || !password) {
-      toast.error('Please enter both email and password');
-      return;
-    }
-    
-    if (password.length < 6) {
-      toast.error('Password must be at least 6 characters');
-      return;
-    }
-    
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
-    
-    setLoading(true);
-    
-    try {
-      const { error } = await signUp(email, password);
-      
-      if (error) {
-        toast.error(error.message);
-      }
-    } catch (error) {
-      toast.error('Failed to sign up');
-      console.error('Sign up error:', error);
-    } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const handleResetPassword = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email) {
-      toast.error('Please enter your email address');
-      return;
-    }
-    
-    setLoading(true);
-    
+    setIsLoading(true);
+    setError("");
+    setMessage("");
+
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
-      
-      if (error) {
-        toast.error(error.message);
-      } else {
-        toast.success('Password reset email sent', {
-          description: 'Check your email for a password reset link'
-        });
-        setResetPasswordMode(false);
-      }
-    } catch (error) {
-      toast.error('Failed to send reset email');
-      console.error('Reset password error:', error);
+      await signUp(email, password);
+      setMessage("Check your email for the confirmation link!");
+    } catch (error: any) {
+      setError(error.message || "Failed to sign up");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
-  
-  const handleGoogleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-    } catch (error) {
-      toast.error('Failed to sign in with Google');
-      console.error('Google sign in error:', error);
-    }
-  };
-  
-  const handleGithubSignIn = async () => {
-    try {
-      await signInWithGithub();
-    } catch (error) {
-      toast.error('Failed to sign in with GitHub');
-      console.error('GitHub sign in error:', error);
-    }
-  };
-  
+
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5" />
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-50" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1),transparent_50%)]" />
       
-      {/* Floating Elements */}
-      <div className="absolute top-20 left-10 w-20 h-20 bg-white/5 rounded-full blur-xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse delay-1000" />
-      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-white/5 rounded-full blur-lg animate-pulse delay-500" />
-      
-      <header className="relative z-10 w-full p-6 flex justify-between items-center border-b border-white/20">
-        <Link to="/" className="flex items-center gap-3 text-white hover:text-white/80 transition-all duration-300 group">
-          <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-          <span className="font-medium">Back to Home</span>
-        </Link>
-        <ThemeToggle />
-      </header>
-      
-      <div className="relative z-10 flex items-center justify-center min-h-[calc(100vh-120px)] p-6">
-        <Card className="w-full max-w-lg bg-white/5 backdrop-blur-xl border border-white/20 shadow-2xl">
-          <CardHeader className="text-center space-y-4 pb-8">
-            <div className="flex justify-center mb-4">
-              <div className="relative">
-                <img src={logoSrc} alt="AxionLabs Logo" className="h-16 drop-shadow-lg" />
-                <div className="absolute inset-0 bg-white/20 rounded-full blur-xl -z-10" />
-              </div>
-            </div>
-            <CardTitle className="text-3xl font-bold text-white">
-              {resetPasswordMode 
-                ? 'Reset Password' 
-                : 'Access Quantum Innovation'}
-            </CardTitle>
-            <CardDescription className="text-lg text-white/70">
-              {resetPasswordMode 
-                ? "Reset your quantum access credentials" 
-                : "Join the future of quantum computing and AI research"}
+      {/* Back to Home Link */}
+      <Link 
+        to="/" 
+        className="absolute top-6 left-6 z-10 flex items-center gap-2 text-white/70 hover:text-white transition-colors glass-button px-4 py-2 rounded-full"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Home
+      </Link>
+
+      <div className="w-full max-w-md z-10">
+        <Card className="glass-card border-white/10 bg-black/80 backdrop-blur-xl">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-white">Welcome to Axions Laboratory</CardTitle>
+            <CardDescription className="text-white/70">
+              Sign in to your account or create a new one
             </CardDescription>
-            
-            {!resetPasswordMode && (
-              <div className="flex items-center justify-center gap-6 pt-4">
-                <div className="flex items-center gap-2 text-sm text-white/60">
-                  <Shield className="h-4 w-4 text-white" />
-                  <span>Secure Access</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-white/60">
-                  <Zap className="h-4 w-4 text-white" />
-                  <span>Quantum Ready</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-white/60">
-                  <Cpu className="h-4 w-4 text-white" />
-                  <span>AI Powered</span>
-                </div>
-              </div>
-            )}
           </CardHeader>
-          
-          <CardContent className="space-y-6">
-            {resetPasswordMode ? (
-              <form onSubmit={handleResetPassword} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="reset-email" className="text-white font-medium">Email Address</Label>
-                  <Input 
-                    id="reset-email" 
-                    type="email" 
-                    placeholder="researcher@company.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
-                    required
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  className="w-full h-12 bg-white hover:bg-white/90 text-black font-semibold shadow-lg"
-                  disabled={loading}
-                >
-                  {loading ? 'Sending Reset Link...' : 'Send Reset Link'}
-                </Button>
-                <Button 
-                  type="button"
-                  variant="ghost" 
-                  className="w-full text-white/70 hover:text-white hover:bg-white/10"
-                  onClick={() => setResetPasswordMode(false)}
-                >
-                  ← Back to Sign In
-                </Button>
-              </form>
-            ) : (
-              <>
-                <div className="space-y-4">
-                  <Button 
-                    type="button"
-                    className="w-full h-12 flex items-center justify-center gap-3 border border-white/20 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm font-medium"
-                    onClick={handleGoogleSignIn}
-                  >
-                    {/* Google SVG icon */}
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20">
-                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                    </svg>
-                    Continue with Google
-                  </Button>
-                  
-                  <Button 
-                    type="button"
-                    className="w-full h-12 flex items-center justify-center gap-3 border border-white/20 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm font-medium"
-                    onClick={handleGithubSignIn}
-                  >
-                    <Github className="h-5 w-5" />
-                    Continue with GitHub
-                  </Button>
-                  
-                  <div className="relative flex items-center py-4">
-                    <div className="flex-grow border-t border-white/20" />
-                    <span className="mx-4 text-white/60 text-sm font-medium">OR CONTINUE WITH EMAIL</span>
-                    <div className="flex-grow border-t border-white/20" />
+          <CardContent>
+            <Tabs defaultValue="signin" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 bg-white/10 border border-white/20">
+                <TabsTrigger value="signin" className="text-white data-[state=active]:bg-white data-[state=active]:text-black">
+                  Sign In
+                </TabsTrigger>
+                <TabsTrigger value="signup" className="text-white data-[state=active]:bg-white data-[state=active]:text-black">
+                  Sign Up
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="signin">
+                <form onSubmit={handleSignIn} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-white">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
+                    />
                   </div>
-                </div>
-                
-                <Tabs defaultValue="signin" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/10 border border-white/20">
-                    <TabsTrigger value="signin" className="data-[state=active]:bg-white/20 data-[state=active]:text-white font-medium text-white/70">Sign In</TabsTrigger>
-                    <TabsTrigger value="signup" className="data-[state=active]:bg-white/20 data-[state=active]:text-white font-medium text-white/70">Create Account</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="signin" className="space-y-6">
-                    <form onSubmit={handleSignIn} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="signin-email" className="text-white font-medium">Email Address</Label>
-                        <Input 
-                          id="signin-email" 
-                          type="email" 
-                          placeholder="researcher@company.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="signin-password" className="text-white font-medium">Password</Label>
-                        <Input 
-                          id="signin-password" 
-                          type="password"
-                          placeholder="••••••••"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
-                          required
-                        />
-                      </div>
-                      <Button 
-                        type="submit" 
-                        className="w-full h-12 bg-white hover:bg-white/90 text-black font-semibold shadow-lg"
-                        disabled={loading}
-                      >
-                        {loading ? 'Signing In...' : 'Access Quantum Platform'}
-                      </Button>
-                      <Button 
-                        type="button"
-                        variant="link" 
-                        className="w-full text-white/70 hover:text-white font-medium"
-                        onClick={() => setResetPasswordMode(true)}
-                      >
-                        Forgot your password?
-                      </Button>
-                    </form>
-                  </TabsContent>
-                  
-                  <TabsContent value="signup" className="space-y-6">
-                    <form onSubmit={handleSignUp} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="signup-email" className="text-white font-medium">Work Email</Label>
-                        <Input 
-                          id="signup-email" 
-                          type="email" 
-                          placeholder="researcher@company.com"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="signup-password" className="text-white font-medium">Password</Label>
-                        <Input 
-                          id="signup-password" 
-                          type="password"
-                          placeholder="••••••••"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          minLength={6}
-                          className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="confirm-password" className="text-white font-medium">Confirm Password</Label>
-                        <Input 
-                          id="confirm-password" 
-                          type="password"
-                          placeholder="••••••••"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          minLength={6}
-                          className="h-12 bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
-                          required
-                        />
-                        <p className="text-xs text-white/50">Must be at least 6 characters</p>
-                      </div>
-                      <Button 
-                        type="submit" 
-                        className="w-full h-12 bg-white hover:bg-white/90 text-black font-semibold shadow-lg"
-                        disabled={loading}
-                      >
-                        {loading ? 'Creating Account...' : 'Join Quantum Research'}
-                      </Button>
-                    </form>
-                  </TabsContent>
-                </Tabs>
-              </>
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-white">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full bg-white text-black hover:bg-white/90 font-medium"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Signing in...
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+              
+              <TabsContent value="signup">
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email" className="text-white">Email</Label>
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password" className="text-white">Password</Label>
+                    <Input
+                      id="signup-password"
+                      type="password"
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full bg-white text-black hover:bg-white/90 font-medium"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating account...
+                      </>
+                    ) : (
+                      "Sign Up"
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+            
+            {error && (
+              <Alert className="mt-4 border-red-500/50 bg-red-500/10">
+                <AlertDescription className="text-red-400">{error}</AlertDescription>
+              </Alert>
+            )}
+            
+            {message && (
+              <Alert className="mt-4 border-green-500/50 bg-green-500/10">
+                <AlertDescription className="text-green-400">{message}</AlertDescription>
+              </Alert>
             )}
           </CardContent>
-          
-          <CardFooter className="justify-center pt-6 border-t border-white/20">
-            <div className="flex items-center gap-2 text-sm text-white/60">
-              <Shield className="h-4 w-4" />
-              <p>Protected by AxionLabs quantum encryption</p>
-            </div>
-          </CardFooter>
         </Card>
       </div>
     </div>
   );
-}
+};
+
+export default Auth;
