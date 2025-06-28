@@ -6,8 +6,19 @@ import { ArrowLeft, User, Settings as SettingsIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AccountSettings } from "@/components/settings/AccountSettings";
 import { ProfileForm } from "@/components/settings/ProfileForm";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Settings = () => {
+  const { user, profile, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black p-4 relative overflow-hidden">
       {/* Background Pattern */}
@@ -52,7 +63,11 @@ const Settings = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <ProfileForm />
+                    <ProfileForm 
+                      user={user}
+                      initialUsername={profile?.username || ''}
+                      initialFullName={profile?.full_name || ''}
+                    />
                   </CardContent>
                 </Card>
               </TabsContent>
