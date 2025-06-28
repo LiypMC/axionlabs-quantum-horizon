@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
 export default function Footer() {
-  const logoSrc = "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png";
+  const logoSrc = "/lovable-uploads/8edfb44f-33b8-4c7b-a7d7-fcc91918d0c1.png";
 
   return (
     <footer className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/50 border-t border-border/50">
@@ -13,8 +13,8 @@ export default function Footer() {
             <div className="flex items-center gap-3 mb-4">
               <img
                 src={logoSrc}
-                alt="AxionLabs Logo"
-                className="h-10"
+                alt="Axions Laboratory Logo"
+                className="h-12 w-auto drop-shadow-sm"
               />
               <Badge variant="outline" className="text-xs">
                 Quantum Innovation Lab
@@ -86,7 +86,7 @@ export default function Footer() {
           </div>
           
           <div className="text-sm text-muted-foreground">
-            © 2025 AxionLabs. All rights reserved. | Advancing quantum frontiers since 2025.
+            © 2025 Axions Laboratory. All rights reserved. | Advancing quantum frontiers since 2025.
           </div>
         </div>
       </div>

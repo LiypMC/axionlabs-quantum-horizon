@@ -3,19 +3,15 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertTriangle, CheckCircle } from 'lucide-react';
-import { useTheme } from '@/components/ThemeProvider';
 
 interface SplashScreenProps {
   onContinue: () => void;
 }
 
 export default function SplashScreen({ onContinue }: SplashScreenProps) {
-  const { theme } = useTheme();
   const [isVisible, setIsVisible] = useState(true);
   
-  const logoSrc = theme === "dark" 
-    ? "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png"
-    : "/lovable-uploads/b799f614-ce3b-419b-be33-2205f81930dc.png";
+  const logoSrc = "/lovable-uploads/8edfb44f-33b8-4c7b-a7d7-fcc91918d0c1.png";
 
   const handleContinue = () => {
     setIsVisible(false);
@@ -38,7 +34,7 @@ export default function SplashScreen({ onContinue }: SplashScreenProps) {
         <CardContent className="p-8 text-center space-y-6">
           <div className="flex justify-center mb-6">
             <div className="relative">
-              <img src={logoSrc} alt="AxionLabs Logo" className="h-20 drop-shadow-lg" />
+              <img src={logoSrc} alt="Axions Laboratory Logo" className="h-24 w-auto drop-shadow-lg" />
               <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl -z-10" />
             </div>
           </div>
@@ -72,7 +68,7 @@ export default function SplashScreen({ onContinue }: SplashScreenProps) {
             size="lg"
             className="w-full mt-8 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold shadow-lg h-12"
           >
-            Continue to AxionLabs
+            Continue to Axions Laboratory
           </Button>
         </CardContent>
       </Card>

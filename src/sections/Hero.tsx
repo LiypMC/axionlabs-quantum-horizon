@@ -21,9 +21,7 @@ export default function Hero() {
   const { theme } = useTheme();
   const { isAuthenticated, user, signOut } = useAuth();
   
-  const logoSrc = theme === "dark" 
-    ? "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png"
-    : "/lovable-uploads/b799f614-ce3b-419b-be33-2205f81930dc.png";
+  const logoSrc = "/lovable-uploads/8edfb44f-33b8-4c7b-a7d7-fcc91918d0c1.png";
   
   const getUserInitials = () => {
     if (user?.email) {
@@ -40,8 +38,8 @@ export default function Hero() {
         <div className="flex items-center gap-4">
           <img
             src={logoSrc}
-            alt="AxionLabs Logo"
-            className="h-12 md:h-14"
+            alt="Axions Laboratory Logo"
+            className="h-16 md:h-20 w-auto drop-shadow-lg"
           />
           <ThemeToggle className="ml-2" />
         </div>
@@ -60,7 +58,7 @@ export default function Hero() {
               <DropdownMenuContent align="end" className="w-56 bg-card/95 backdrop-blur-sm border border-border/50">
                 <div className="p-3 border-b border-border/50">
                   <p className="font-medium text-sm">{user?.email}</p>
-                  <p className="text-xs text-muted-foreground">AxionLabs Account</p>
+                  <p className="text-xs text-muted-foreground">Axions Laboratory Account</p>
                 </div>
                 <DropdownMenuItem asChild>
                   <Link to="/settings" className="flex items-center cursor-pointer">
@@ -126,7 +124,7 @@ export default function Hero() {
       <div className="text-center max-w-5xl mx-auto z-10 space-y-8">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
           <span className="block bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-            AxionLabs
+            Axions Laboratory
           </span>
           <span className="block text-2xl md:text-3xl lg:text-4xl mt-4 text-primary font-semibold">
             Pioneering Quantum Frontiers
