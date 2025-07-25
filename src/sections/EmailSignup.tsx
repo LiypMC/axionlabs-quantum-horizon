@@ -21,7 +21,7 @@ export default function EmailSignup() {
     
     toast({
       title: "Successfully subscribed!",
-      description: "You'll be the first to know about QHub and our latest innovations.",
+      description: "You'll be the first to know about Gideon and our latest AGI innovations.",
     });
     
     setEmail("");
@@ -40,11 +40,11 @@ export default function EmailSignup() {
               </Badge>
             </div>
             <CardTitle className="text-3xl md:text-4xl font-bold mb-4">
-              Be First in Line for QHub
+              Be First to Meet Gideon
             </CardTitle>
             <CardDescription className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Join our exclusive list and get early access to the quantum computing platform 
-              that will change how developers interact with quantum systems.
+              Join our exclusive list and get early access to the hyper-intelligent AI platform 
+              that will change how humans interact with artificial intelligence.
             </CardDescription>
           </CardHeader>
           
@@ -87,7 +87,7 @@ export default function EmailSignup() {
             </form>
             
             <p className="text-center text-sm text-muted-foreground">
-              Join 2,500+ researchers, developers, and quantum enthusiasts already on our list.
+              Join 2,500+ researchers, developers, and AI enthusiasts already on our list.
               <br />
               No spam, unsubscribe anytime.
             </p>

@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Settings, LogOut, Zap, Code, Cpu, ChevronDown, Home, User, Mail, Info } from "lucide-react";
+import { Settings, LogOut, Zap, Code, Cpu, ChevronDown, Home, User, Mail, Info, Brain, MessageCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,19 +30,54 @@ export default function Hero() {
   
   return (
     <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Spline Background */}
-      <div className="absolute inset-0 z-0">
-        <iframe 
-          src='https://my.spline.design/particles-M8cFBTt81yqFzQOHv7R06Ql3/' 
-          frameBorder='0' 
-          width='100%' 
-          height='100%'
-          className="w-full h-full"
-        />
-        <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px]" />
+      {/* Enhanced Spline Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {/* Gradient Overlay Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900/80 to-black z-10" />
+        
+        {/* Spline 3D Scene */}
+        <div className="absolute inset-0 transform origin-center spline-background">
+          <iframe 
+            src='https://my.spline.design/particles-M8cFBTt81yqFzQOHv7R06Ql3/' 
+            frameBorder='0' 
+            width='100%' 
+            height='100%'
+            className="w-full h-full opacity-90"
+            loading="lazy"
+            title="3D Particle Background"
+          />
+        </div>
+        
+        {/* Animated Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/40 z-20" />
+        
+        {/* Floating Particles Effect */}
+        <div className="absolute inset-0 z-30 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white/30 rounded-full animate-pulse animate-particle-drift" />
+          <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-white/40 rounded-full animate-pulse animate-particle-drift-delayed" />
+          <div className="absolute bottom-1/3 left-1/3 w-1.5 h-1.5 bg-white/20 rounded-full animate-pulse animate-particle-drift-slow" />
+          <div className="absolute top-2/3 right-1/3 w-1 h-1 bg-white/50 rounded-full animate-pulse animate-particle-drift" />
+          <div className="absolute bottom-1/4 right-1/2 w-2 h-2 bg-white/25 rounded-full animate-pulse animate-particle-drift-delayed" />
+        </div>
+        
+        {/* Neural Grid Overlay */}
+        <div className="absolute inset-0 z-25 opacity-20">
+          <div className="absolute inset-0"
+               style={{
+                 backgroundImage: `
+                   linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+                 `,
+                 backgroundSize: '50px 50px'
+               }}
+          />
+        </div>
+        
+        {/* Radial Spotlight Effect */}
+        <div className="absolute inset-0 z-40 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,0.3)_70%)]" />
       </div>
 
-      {/* Floating QHub Notification */}
+      {/* Floating Gideon Announcement */}
       <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-500 ${isAnnouncementOpen ? 'translate-y-0' : '-translate-y-2'}`}>
         <div className="bg-black/90 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
           <button
@@ -53,7 +88,7 @@ export default function Hero() {
               <Zap className="w-4 h-4 mr-2" />
               Coming Soon
             </Badge>
-            <span className="text-white font-semibold">QHub Platform</span>
+            <span className="text-white font-semibold">Gideon AI Platform</span>
             <ChevronDown className={`w-5 h-5 text-white/70 transition-transform duration-300 ${isAnnouncementOpen ? 'rotate-180' : ''}`} />
           </button>
           
@@ -61,19 +96,19 @@ export default function Hero() {
             <div className="p-6 border-t border-white/10">
               <div className="text-center max-w-md">
                 <h2 className="text-2xl font-bold mb-3 text-white">
-                  Revolutionary Quantum Computing
+                  The Intelligence Revolution
                 </h2>
                 <p className="text-white/70 mb-4">
-                  Run Python code on real quantum computers. The future of quantum development is here.
+                  Meet Gideon — the hyper-intelligent AI that speaks, thinks, reasons, and acts like it's alive.
                 </p>
                 <div className="flex items-center justify-center gap-6 text-sm text-white/60">
                   <div className="flex items-center gap-2">
                     <Code className="w-4 h-4" />
-                    <span>Python Package</span>
+                    <span>Voice-First AI</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Cpu className="w-4 h-4" />
-                    <span>Web & Desktop App</span>
+                    <span>Proprietary LLM</span>
                   </div>
                 </div>
               </div>
@@ -99,6 +134,12 @@ export default function Hero() {
             <div className="flex items-center gap-4">
               <Link to="/" className="p-3 hover:bg-white/10 rounded-2xl transition-all hover:scale-110">
                 <Home className="w-5 h-5 text-white" />
+              </Link>
+              <Link to="/gideon" className="p-3 hover:bg-white/10 rounded-2xl transition-all hover:scale-110">
+                <Brain className="w-5 h-5 text-white" />
+              </Link>
+              <Link to="/chat" className="p-3 hover:bg-white/10 rounded-2xl transition-all hover:scale-110">
+                <MessageCircle className="w-5 h-5 text-white" />
               </Link>
               <Link to="#mission" className="p-3 hover:bg-white/10 rounded-2xl transition-all hover:scale-110">
                 <Info className="w-5 h-5 text-white" />
@@ -156,19 +197,29 @@ export default function Hero() {
       <div className="text-center max-w-5xl mx-auto z-10 space-y-8 relative">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
           <span className="block text-white drop-shadow-2xl">
-            Axions Laboratory
+            AxionsLab
           </span>
           <span className="block text-2xl md:text-3xl lg:text-4xl mt-4 text-white/90 font-semibold drop-shadow-xl">
-            Pioneering Quantum Frontiers
+            Talk to the Future
           </span>
         </h1>
         
         <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
-          Advancing particle physics, quantum computing, and breakthrough technologies that shape tomorrow's world.
+          We are building Gideon — a hyper-intelligent AI that speaks, thinks, reasons, and acts. The next evolution of human-machine interaction.
         </p>
         
-        <div className="mt-12">
+        <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
           <NotifyButton variant="filled" className="text-lg py-6 px-10 font-semibold bg-white text-black hover:bg-white/90 shadow-2xl hover:scale-105 transition-all" />
+          <Button 
+            asChild
+            variant="outline"
+            className="text-lg py-6 px-10 font-semibold border-white/30 text-white hover:bg-white/10 shadow-2xl hover:scale-105 transition-all"
+          >
+            <Link to="/gideon">
+              <Brain className="w-5 h-5 mr-2" />
+              Meet Gideon
+            </Link>
+          </Button>
         </div>
       </div>
       

@@ -63,9 +63,38 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-50" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1),transparent_50%)]" />
+      {/* Enhanced Spline Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {/* Gradient Overlay Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900/80 to-black z-10" />
+        
+        {/* Spline 3D Scene */}
+        <div className="absolute inset-0 transform origin-center spline-background">
+          <iframe 
+            src='https://my.spline.design/particles-M8cFBTt81yqFzQOHv7R06Ql3/' 
+            frameBorder='0' 
+            width='100%' 
+            height='100%'
+            className="w-full h-full opacity-60"
+            loading="lazy"
+            title="3D Particle Background"
+          />
+        </div>
+        
+        {/* Animated Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/60 z-20" />
+        
+        {/* Floating Particles Effect */}
+        <div className="absolute inset-0 z-30 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white/25 rounded-full animate-pulse animate-particle-drift" />
+          <div className="absolute top-1/3 right-1/4 w-1.5 h-1.5 bg-white/20 rounded-full animate-pulse animate-particle-drift-delayed" />
+          <div className="absolute bottom-1/3 left-1/3 w-1 h-1 bg-white/30 rounded-full animate-pulse animate-particle-drift-slow" />
+          <div className="absolute top-2/3 right-1/3 w-1 h-1 bg-white/15 rounded-full animate-pulse animate-particle-drift" />
+        </div>
+        
+        {/* Radial Spotlight Effect */}
+        <div className="absolute inset-0 z-40 bg-[radial-gradient(circle_at_center,transparent_25%,rgba(0,0,0,0.5)_75%)]" />
+      </div>
       
       {/* Back to Home Link */}
       <Link 

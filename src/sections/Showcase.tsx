@@ -1,65 +1,65 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Atom, Cpu, Shield, Sparkles, Clock, GitBranch, Code, Zap, Database } from "lucide-react";
+import { Brain, Cpu, Shield, Mic, Layers, Code, Zap, Eye, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const showcaseItems = [
   {
-    title: "QHub Platform",
-    description: "Revolutionary quantum computing platform for Python developers",
-    icon: <Code className="w-8 h-8" />,
-    status: "Coming June 20",
-    category: "Quantum Computing",
+    title: "Gideon Platform",
+    description: "Hyper-intelligent AI assistant with real-time voice interaction",
+    icon: <Brain className="w-8 h-8" />,
+    status: "Coming Soon",
+    category: "AGI Platform",
     featured: true
   },
   {
-    title: "Particle Collider X-500",
-    description: "Next-generation collider for sub-atomic exploration and research",
-    icon: <Atom className="w-8 h-8" />,
+    title: "Echelon E1",
+    description: "Ultra-lightweight AI model for mobile and embedded systems",
+    icon: <Layers className="w-8 h-8" />,
     status: "In Development",
-    category: "Particle Physics"
+    category: "Mobile AI"
   },
   {
-    title: "Quantum AI Core",
-    description: "AI chipset optimized for quantum state prediction and analysis",
+    title: "Echelon E2",
+    description: "Core intelligence layer powering all Gideon public services",
     icon: <Cpu className="w-8 h-8" />,
+    status: "Active Development",
+    category: "Core AI"
+  },
+  {
+    title: "Echelon E3",
+    description: "Experimental AGI-class system for high-level planning and foresight",
+    icon: <Zap className="w-8 h-8" />,
     status: "Research Phase",
-    category: "AI Technology"
+    category: "AGI Research"
   },
   {
-    title: "Defense HyperShield",
-    description: "Adaptive defense technology for autonomous threat mitigation",
-    icon: <Shield className="w-8 h-8" />,
-    status: "Prototype",
-    category: "Defense Systems"
+    title: "Voice Intelligence Core",
+    description: "Real-time speech recognition and emotion-aware voice generation",
+    icon: <Mic className="w-8 h-8" />,
+    status: "Beta Testing",
+    category: "Voice AI"
   },
   {
-    title: "DarkMatter Explorer",
-    description: "Advanced instruments to detect and harness dark matter energy",
-    icon: <Sparkles className="w-8 h-8" />,
-    status: "Research Phase",
-    category: "Dark Matter"
-  },
-  {
-    title: "Wormhole Gate",
-    description: "Proof-of-concept for stable spacetime bridge technology",
-    icon: <GitBranch className="w-8 h-8" />,
-    status: "Conceptual",
-    category: "Spacetime"
-  },
-  {
-    title: "ChronoDrive Engine",
-    description: "Experimental device for controlled time dilation effects",
-    icon: <Clock className="w-8 h-8" />,
-    status: "Theory",
-    category: "Temporal Physics"
-  },
-  {
-    title: "Quantum Database",
-    description: "Quantum-encrypted data storage with impossible breach protection",
-    icon: <Database className="w-8 h-8" />,
+    title: "Visual Perception Engine",
+    description: "Advanced computer vision for multi-modal AI interaction",
+    icon: <Eye className="w-8 h-8" />,
     status: "Development",
-    category: "Data Security"
+    category: "Vision AI"
+  },
+  {
+    title: "Memory Architecture",
+    description: "Persistent long-term contextual memory system",
+    icon: <MessageSquare className="w-8 h-8" />,
+    status: "Alpha",
+    category: "Memory AI"
+  },
+  {
+    title: "Security Framework",
+    description: "Enterprise-grade AI security and privacy protection",
+    icon: <Shield className="w-8 h-8" />,
+    status: "Development",
+    category: "AI Security"
   }
 ];
 
@@ -69,10 +69,10 @@ export default function Showcase() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Innovation Pipeline
+            Intelligence Architecture
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Our cutting-edge projects blend advanced physics, quantum computing, and breakthrough technologies
+            Our proprietary AI technology stack powering the next generation of human-machine interaction
           </p>
         </div>
         

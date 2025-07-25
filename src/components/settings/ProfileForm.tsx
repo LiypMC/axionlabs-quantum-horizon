@@ -58,7 +58,7 @@ export const ProfileForm = ({ user, initialUsername, initialFullName }: ProfileF
           id="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="bg-background/50 border-white/20 focus:border-quantum-purple"
+          className="bg-background/50 border-white/20 focus:border-primary"
         />
       </div>
       <div className="space-y-2">
@@ -67,7 +67,7 @@ export const ProfileForm = ({ user, initialUsername, initialFullName }: ProfileF
           id="fullName"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-          className="bg-background/50 border-white/20 focus:border-quantum-purple"
+          className="bg-background/50 border-white/20 focus:border-primary"
         />
       </div>
       <div className="space-y-2">

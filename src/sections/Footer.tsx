@@ -17,38 +17,38 @@ export default function Footer() {
                 className="h-12 w-auto drop-shadow-sm"
               />
               <Badge variant="outline" className="text-xs bg-black border-white/30 text-white">
-                Quantum Innovation Lab
+                AGI Research Lab
               </Badge>
             </div>
             <p className="text-white/60 mb-4 max-w-md">
-              Pioneering the future of quantum computing, particle physics, and advanced technologies 
-              that will revolutionize how we understand and interact with the universe.
+              Pioneering the future of artificial general intelligence and advanced AI technologies 
+              that will revolutionize how humans interact with intelligent systems.
             </p>
             <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary" className="text-xs bg-white/10 text-white border-white/20">Quantum Computing</Badge>
-              <Badge variant="secondary" className="text-xs bg-white/10 text-white border-white/20">Particle Physics</Badge>
-              <Badge variant="secondary" className="text-xs bg-white/10 text-white border-white/20">AI Research</Badge>
+              <Badge variant="secondary" className="text-xs bg-white/10 text-white border-white/20">Artificial Intelligence</Badge>
+              <Badge variant="secondary" className="text-xs bg-white/10 text-white border-white/20">Voice AI</Badge>
+              <Badge variant="secondary" className="text-xs bg-white/10 text-white border-white/20">AGI Research</Badge>
             </div>
           </div>
           
           <div>
             <h3 className="font-semibold mb-4 text-white">Research Areas</h3>
             <ul className="space-y-2 text-sm text-white/60">
-              <li>Quantum Computing</li>
-              <li>Particle Accelerators</li>
-              <li>Dark Matter Research</li>
-              <li>AI & Machine Learning</li>
-              <li>Defense Technologies</li>
+              <li>Artificial General Intelligence</li>
+              <li>Voice Intelligence Systems</li>
+              <li>Large Language Models</li>
+              <li>Real-time AI Interaction</li>
+              <li>AI Security & Privacy</li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-semibold mb-4 text-white">Products</h3>
             <ul className="space-y-2 text-sm text-white/60">
-              <li>QHub Platform <Badge variant="outline" className="ml-1 text-xs bg-black border-white/30 text-white">Coming Soon</Badge></li>
-              <li>Quantum SDK</li>
-              <li>Research Tools</li>
-              <li>Educational Resources</li>
+              <li>Gideon Platform <Badge variant="outline" className="ml-1 text-xs bg-black border-white/30 text-white">Coming Soon</Badge></li>
+              <li>Echelon Models</li>
+              <li>Voice AI SDK</li>
+              <li>Developer Resources</li>
             </ul>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function Footer() {
           </div>
           
           <div className="text-sm text-white/60">
-            © 2025 Axions Laboratory. All rights reserved. | Advancing quantum frontiers since 2025.
+            © 2025 AxionsLab. All rights reserved. | Advancing AI frontiers since 2025.
           </div>
         </div>
       </div>

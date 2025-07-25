@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Hero from "@/sections/Hero";
 import Mission from "@/sections/Mission";
 import Showcase from "@/sections/Showcase";
+import VoiceIntelligence from "@/sections/VoiceIntelligence";
 import ProjectSpotlight from "@/sections/ProjectSpotlight";
 import EmailSignup from "@/sections/EmailSignup";
 import Footer from "@/sections/Footer";
@@ -52,6 +53,7 @@ const Index = () => {
       <Hero />
       <Mission />
       <Showcase />
+      <VoiceIntelligence />
       <ProjectSpotlight />
       <EmailSignup />
       <Footer />

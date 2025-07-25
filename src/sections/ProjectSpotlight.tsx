@@ -2,11 +2,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, Code, Cpu, ArrowRight, Clock, Play, Settings, Database, BarChart3 } from "lucide-react";
+import { Zap, Brain, Mic, ArrowRight, Clock, Play, Settings, MessageSquare, BarChart3 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function ProjectSpotlight() {
   return (
-    <section id="qhub-spotlight" className="py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-black">
+    <section id="gideon-spotlight" className="py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-black">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent" />
       
@@ -22,11 +23,11 @@ export default function ProjectSpotlight() {
             Featured Innovation
           </Badge>
           <h2 className="text-5xl md:text-6xl font-bold mb-6 text-white">
-            Introducing QHub
+            Introducing Gideon
           </h2>
           <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto leading-relaxed">
-            The world's first cloud platform for running Python code directly on quantum computers. 
-            Revolutionary quantum computing made accessible to everyone.
+            The hyper-intelligent AI that speaks, thinks, reasons, and acts. 
+            Revolutionary voice-first artificial intelligence made real.
           </p>
         </div>
 
@@ -35,21 +36,21 @@ export default function ProjectSpotlight() {
             <div className="space-y-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                  <Code className="w-6 h-6 text-white" />
+                  <Mic className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white">Python Package Coming</h3>
-                  <p className="text-white/60">Install our Python package and start coding quantum algorithms</p>
+                  <h3 className="text-xl font-semibold text-white">Voice-First Interaction</h3>
+                  <p className="text-white/60">Speak naturally to Gideon like it's alive — no commands needed</p>
                 </div>
               </div>
               
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                  <Cpu className="w-6 h-6 text-white" />
+                  <Brain className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white">Web & Desktop App</h3>
-                  <p className="text-white/60">Access quantum computing through our intuitive applications</p>
+                  <h3 className="text-xl font-semibold text-white">Proprietary Intelligence</h3>
+                  <p className="text-white/60">Powered by our Echelon models — built from the ground up</p>
                 </div>
               </div>
               
@@ -58,8 +59,8 @@ export default function ProjectSpotlight() {
                   <Zap className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white">Real Quantum Hardware</h3>
-                  <p className="text-white/60">Execute on actual quantum processors, not simulators</p>
+                  <h3 className="text-xl font-semibold text-white">Real-Time Intelligence</h3>
+                  <p className="text-white/60">Instant responses with persistent memory and context awareness</p>
                 </div>
               </div>
             </div>
@@ -72,12 +73,14 @@ export default function ProjectSpotlight() {
                 </Badge>
               </div>
               <p className="text-white/70 mb-4 text-center">
-                Be among the first to experience quantum computing in the cloud
+                Be among the first to experience the future of AI interaction
               </p>
-              <Button className="w-full bg-white hover:bg-white/90 text-black font-semibold">
-                <Clock className="w-4 h-4 mr-2" />
-                Get Early Access
-                <ArrowRight className="w-4 h-4 ml-2" />
+              <Button asChild className="w-full bg-white hover:bg-white/90 text-black font-semibold">
+                <Link to="/gideon">
+                  <Brain className="w-4 h-4 mr-2" />
+                  Learn More
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
               </Button>
             </div>
           </div>
@@ -94,7 +97,7 @@ export default function ProjectSpotlight() {
                         <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                         <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                       </div>
-                      <span className="text-white/70 text-sm font-medium">QHub Quantum IDE</span>
+                      <span className="text-white/70 text-sm font-medium">Gideon AI Interface</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Settings className="w-4 h-4 text-white/60" />
@@ -116,8 +119,8 @@ export default function ProjectSpotlight() {
                     <div className="flex-1 space-y-3">
                       <div className="bg-white/10 rounded-lg p-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <Database className="w-4 h-4 text-blue-400" />
-                          <span className="text-white text-sm font-medium">Quantum Circuit Builder</span>
+                          <MessageSquare className="w-4 h-4 text-blue-400" />
+                          <span className="text-white text-sm font-medium">Voice Conversation</span>
                         </div>
                         <div className="grid grid-cols-4 gap-2">
                           <div className="h-8 bg-white/20 rounded"></div>
@@ -130,7 +133,7 @@ export default function ProjectSpotlight() {
                       <div className="bg-white/10 rounded-lg p-4">
                         <div className="flex items-center gap-2 mb-2">
                           <BarChart3 className="w-4 h-4 text-green-400" />
-                          <span className="text-white text-sm font-medium">Quantum Results</span>
+                          <span className="text-white text-sm font-medium">Intelligence Analytics</span>
                         </div>
                         <div className="flex items-end gap-1 h-16">
                           <div className="w-4 bg-green-400 rounded-t" style={{height: '60%'}}></div>
@@ -146,7 +149,7 @@ export default function ProjectSpotlight() {
                   <div className="bg-white/5 rounded-lg p-3 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                      <span className="text-white/70 text-xs">Connected to Quantum Computer</span>
+                      <span className="text-white/70 text-xs">Connected to Echelon E2</span>
                     </div>
                     <span className="text-white/50 text-xs">Runtime: 2.3s</span>
                   </div>
@@ -161,7 +164,7 @@ export default function ProjectSpotlight() {
 
         <div className="text-center">
           <div className="inline-flex items-center gap-4 bg-white/5 backdrop-blur-sm border border-white/20 rounded-full px-8 py-4">
-            <span className="text-white/60">Join the quantum revolution</span>
+            <span className="text-white/60">Join the intelligence revolution</span>
             <ArrowRight className="w-4 h-4 text-white" />
             <span className="font-semibold text-white">Early access available</span>
           </div>

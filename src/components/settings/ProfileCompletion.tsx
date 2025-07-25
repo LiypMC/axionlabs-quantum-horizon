@@ -53,7 +53,7 @@ export const ProfileCompletion = ({ user }: ProfileCompletionProps) => {
       if (error) throw error;
 
       toast.success('Profile completed successfully!', {
-        description: 'Your quantum research profile is now complete.'
+        description: 'Your AI research profile is now complete.'
       });
       
       // Refresh the page to update the UI

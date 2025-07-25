@@ -59,7 +59,7 @@ export const AccountLayout = ({ children, title, description }: AccountLayoutPro
           <CardFooter className="justify-center pt-6 border-t border-white/20">
             <div className="flex items-center gap-2 text-sm text-white/60">
               <Shield className="h-4 w-4" />
-              <p>Protected by AxionLabs quantum encryption</p>
+              <p>Protected by AxionsLab enterprise encryption</p>
             </div>
           </CardFooter>
         </Card>

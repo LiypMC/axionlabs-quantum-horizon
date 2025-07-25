@@ -14,10 +14,10 @@ const SplashScreen = ({ onContinue }: SplashScreenProps) => {
   const logoSrc = "/lovable-uploads/1649c4bf-c03b-4d41-b660-4a2d8eded619.png";
   
   const features = [
-    "Quantum Computing Platform",
-    "Real-time Particle Simulation",
-    "Advanced Research Tools",
-    "Breakthrough Technologies"
+    "Hyper-Intelligent AI Platform",
+    "Voice-First Interaction",
+    "Proprietary Echelon Models",
+    "Revolutionary AGI Technology"
   ];
 
   useEffect(() => {
@@ -63,12 +63,12 @@ const SplashScreen = ({ onContinue }: SplashScreenProps) => {
 
         {/* Title */}
         <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
-          Axions Laboratory
+          AxionsLab
         </h1>
 
         {/* Subtitle */}
         <p className="text-xl md:text-2xl text-white/80 mb-8 drop-shadow-xl">
-          Welcome to the Future of Quantum Research
+          Welcome to the Future of Intelligence
         </p>
 
         {/* Animated Features */}
@@ -87,7 +87,7 @@ const SplashScreen = ({ onContinue }: SplashScreenProps) => {
           size="lg"
           className="bg-white text-black hover:bg-white/90 font-semibold px-8 py-4 text-lg rounded-full shadow-2xl hover:scale-105 transition-all duration-300 group"
         >
-          Enter Laboratory
+          Talk to the Future
           <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </Button>
 

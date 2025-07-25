@@ -1,47 +1,55 @@
 
-import { Button } from "@/components/ui/button";
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "./ThemeProvider";
-import { triggerPulseAnimation, createParticleExplosion } from "@/lib/animations";
-import { useState } from "react";
+import { Sun, Moon, Monitor } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface ThemeToggleProps {
   className?: string;
 }
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
-  const [isDark, setIsDark] = useState(true);
+  const { theme, setTheme } = useTheme();
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setIsDark(!isDark);
-    
-    // Apply theme to document
-    const root = document.documentElement;
-    if (!isDark) {
-      root.classList.add('dark');
-      root.classList.remove('light');
-      root.style.backgroundColor = '#000000';
-    } else {
-      root.classList.add('light');
-      root.classList.remove('dark');
-      root.style.backgroundColor = '#ffffff';
+  const getIcon = () => {
+    switch (theme) {
+      case 'light':
+        return <Sun className="w-4 h-4" />;
+      case 'dark':
+        return <Moon className="w-4 h-4" />;
+      default:
+        return <Monitor className="w-4 h-4" />;
     }
-    
-    triggerPulseAnimation();
-    createParticleExplosion(event.clientX, event.clientY);
   };
 
   return (
-    <Button
-      variant="outline"
-      size="icon"
-      className={`rounded-full theme-transition border-white/20 hover:bg-white/10 ${className || ""}`}
-      onClick={handleClick}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-    >
-      <Sun className={`h-[1.2rem] w-[1.2rem] transition-all ${isDark ? 'rotate-0 scale-0' : 'rotate-0 scale-100'} text-white`} />
-      <Moon className={`absolute h-[1.2rem] w-[1.2rem] transition-all ${isDark ? 'rotate-0 scale-100' : '-rotate-90 scale-0'} text-white`} />
-      <span className="sr-only">{isDark ? 'Switch to light mode' : 'Switch to dark mode'}</span>
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button 
+          className={`theme-toggle ${className || ''}`}
+          aria-label="Toggle theme"
+        >
+          {getIcon()}
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-36">
+        <DropdownMenuItem onClick={() => setTheme('light')}>
+          <Sun className="w-4 h-4 mr-2" />
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('dark')}>
+          <Moon className="w-4 h-4 mr-2" />
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('system')}>
+          <Monitor className="w-4 h-4 mr-2" />
+          System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
