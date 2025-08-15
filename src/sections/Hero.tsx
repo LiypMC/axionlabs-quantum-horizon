@@ -185,7 +185,7 @@ export default function Hero() {
                   className="bg-white hover:bg-white/90 text-black font-medium hover:scale-110 transition-all"
                   onClick={() => {
                     const currentUrl = window.location.href;
-                    const redirectUrl = `https://user.axionhosting.com/auth/login?redirect=${encodeURIComponent(currentUrl)}&app=main`;
+                    const redirectUrl = `https://user.axionshosting.com/auth/login?redirect=${encodeURIComponent(currentUrl)}&app=main`;
                     window.location.href = redirectUrl;
                   }}
                 >
