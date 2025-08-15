@@ -30,14 +30,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   useEffect(() => {
     try {
-      // Set up the auth listener first
+      // Check for cross-domain auth token first
+      const authToken = localStorage.getItem('auth_token');
+      const userData = localStorage.getItem('user_data');
+      
+      if (authToken && userData) {
+        // User is authenticated via cross-domain auth
+        const user = JSON.parse(userData);
+        const mockSession = {
+          access_token: authToken,
+          user: {
+            id: user.id,
+            email: user.email,
+            user_metadata: { full_name: user.full_name }
+          }
+        };
+        setSession(mockSession as any);
+        setUser(mockSession.user as any);
+        setProfile({
+          id: user.id,
+          full_name: user.full_name,
+          username: user.email.split('@')[0],
+          avatar_url: null,
+          profile_completed: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        } as any);
+        setLoading(false);
+        return;
+      }
+
+      // Fallback to Supabase auth
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event, currentSession) => {
           setSession(currentSession);
           setUser(currentSession?.user ?? null);
           
           if (currentSession?.user) {
-            // Fetch user profile without blocking
             setTimeout(() => {
               fetchUserProfile(currentSession.user.id);
             }, 0);
@@ -49,7 +78,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       );
       
-      // Then check for an existing session
       supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
@@ -62,7 +90,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         setLoading(false);
       }).catch(() => {
-        // If auth fails, still set loading to false
         setLoading(false);
       });
       
@@ -70,7 +97,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         subscription?.unsubscribe();
       };
     } catch (error) {
-      // If auth setup fails, still set loading to false
       setLoading(false);
     }
   }, []);
@@ -226,7 +252,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
   
   const signOut = async () => {
+    // Clear cross-domain auth tokens
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_data');
+    
+    // Clear Supabase session
     await supabase.auth.signOut();
+    
+    // Reset state
+    setSession(null);
+    setUser(null);
+    setProfile(null);
+    
     toast.success('You have been signed out');
   };
   

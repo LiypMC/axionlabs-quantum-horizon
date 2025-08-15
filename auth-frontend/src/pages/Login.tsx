@@ -40,15 +40,24 @@ export function Login() {
 
   const handleLoginSuccess = async (data: any) => {
     setError(null)
-    setSuccess('Successfully signed in!')
+    setSuccess('Successfully signed in! Redirecting...')
 
-    // Handle redirect
+    // Handle redirect with temp token for cross-domain auth
     if (data.redirectUrl && validateRedirectUrl(data.redirectUrl)) {
-      // For cross-domain, we need to handle the redirect with temp token
-      window.location.href = data.redirectUrl
+      // Generate temporary token and redirect back to main site
+      const tempToken = 'temp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+      const callbackUrl = new URL('/auth/callback', data.redirectUrl)
+      callbackUrl.searchParams.set('token', tempToken)
+      callbackUrl.searchParams.set('return_to', data.redirectUrl)
+      
+      setTimeout(() => {
+        window.location.href = callbackUrl.toString()
+      }, 1000)
     } else {
       // Default redirect to main site
-      window.location.href = 'https://axionslab.com'
+      setTimeout(() => {
+        window.location.href = 'https://axionslab.com'
+      }, 1000)
     }
   }
 

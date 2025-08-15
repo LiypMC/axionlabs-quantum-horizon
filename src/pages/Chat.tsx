@@ -31,13 +31,41 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Chat() {
-  const [selectedModel, setSelectedModel] = useState("echelon-e2");
+  const { user, loading, isAuthenticated } = useAuth();
+  const [selectedModel, setSelectedModel] = useState("@cf/meta/llama-3.2-3b-preview");
   const [message, setMessage] = useState("");
   const [activeConversationId, setActiveConversationId] = useState("1");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+
+  // Redirect to auth if not authenticated
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      const currentUrl = window.location.href;
+      const redirectUrl = `https://user.axionshosting.com/auth/login?redirect=${encodeURIComponent(currentUrl)}&app=main`;
+      window.location.href = redirectUrl;
+    }
+  }, [loading, isAuthenticated]);
+
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
+          <p className="text-white">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render chat if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -76,49 +104,96 @@ export default function Chat() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
-  // Store all conversations with their messages
-  const [conversations, setConversations] = useState({
-    "1": {
-      id: "1",
-      title: "New conversation",
-      messages: [
-        {
-          id: 1,
-          role: "assistant",
-          content: "Hello! I'm Gideon, your AI assistant powered by Cloudflare Workers AI. I'm now fully operational and ready to help you with anything you need. How can I assist you today?",
-          timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-        }
-      ],
-      createdAt: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-    }
-  });
+  // Store conversations and messages from API
+  const [conversations, setConversations] = useState<any>({});
+  const [conversationsList, setConversationsList] = useState<any[]>([]);
+  const [isLoadingConversations, setIsLoadingConversations] = useState(true);
 
   // Get current conversation data
   const currentConversation = conversations[activeConversationId];
-  const conversationsList = Object.values(conversations).sort((a, b) => 
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+
+  // Load conversations from API
+  useEffect(() => {
+    const loadConversations = async () => {
+      if (!isAuthenticated) return;
+      
+      try {
+        setIsLoadingConversations(true);
+        const response = await fetch('https://axionlabs-api.a-contactnaol.workers.dev/v1/conversations');
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          const conversationsData: any = {};
+          const conversationsArray = result.data;
+          
+          // Load messages for each conversation
+          for (const conv of conversationsArray) {
+            const messagesResponse = await fetch(`https://axionlabs-api.a-contactnaol.workers.dev/v1/conversations/${conv.id}/messages`);
+            const messagesResult = await messagesResponse.json();
+            
+            conversationsData[conv.id] = {
+              ...conv,
+              messages: messagesResult.success ? messagesResult.data.map((msg: any) => ({
+                id: msg.id,
+                role: msg.role,
+                content: msg.content,
+                timestamp: new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+              })) : []
+            };
+          }
+          
+          setConversations(conversationsData);
+          setConversationsList(conversationsArray.sort((a: any, b: any) => 
+            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+          ));
+          
+          // Set active conversation to the most recent one if none selected
+          if (!activeConversationId && conversationsArray.length > 0) {
+            setActiveConversationId(conversationsArray[0].id);
+          }
+        }
+        
+        // If no conversations exist, create a default one
+        if (!result.data || result.data.length === 0) {
+          await handleNewChat();
+        }
+      } catch (error) {
+        console.error('Failed to load conversations:', error);
+        // Create a default conversation on error
+        await handleNewChat();
+      } finally {
+        setIsLoadingConversations(false);
+      }
+    };
+
+    loadConversations();
+  }, [isAuthenticated]);
 
   const models = [
     {
-      id: "echelon-e1",
-      name: "Echelon E1",
-      description: "Fast responses"
+      id: "@cf/meta/llama-3.2-1b-preview",
+      name: "Llama 3.2 1B",
+      description: "Fast and efficient"
     },
     {
-      id: "echelon-e2", 
-      name: "Echelon E2",
+      id: "@cf/meta/llama-3.2-3b-preview", 
+      name: "Llama 3.2 3B",
       description: "Balanced performance"
     },
     {
-      id: "echelon-e3",
-      name: "Echelon E3", 
-      description: "Most capable"
+      id: "@cf/meta/codellama-7b-instruct-awq",
+      name: "CodeLlama 7B", 
+      description: "Code and reasoning"
+    },
+    {
+      id: "@cf/mistral/mistral-7b-instruct-v0.1",
+      name: "Mistral 7B",
+      description: "Creative and detailed"
     }
   ];
 
   const handleSendMessage = async () => {
-    if (!message.trim()) return;
+    if (!message.trim() || !activeConversationId) return;
     
     const userMessage = {
       id: Date.now(),
@@ -127,13 +202,12 @@ export default function Chat() {
       timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
     };
     
-    // Add user message to current conversation
+    // Add user message to current conversation locally (for immediate UI feedback)
     setConversations(prev => ({
       ...prev,
       [activeConversationId]: {
         ...prev[activeConversationId],
-        messages: [...prev[activeConversationId].messages, userMessage],
-        title: prev[activeConversationId].messages.length === 1 ? message.slice(0, 30) + "..." : prev[activeConversationId].title
+        messages: [...(prev[activeConversationId]?.messages || []), userMessage]
       }
     }));
     
@@ -143,7 +217,7 @@ export default function Chat() {
     
     try {
       // Get conversation history for context
-      const conversationHistory = conversations[activeConversationId].messages.map(msg => ({
+      const conversationHistory = (conversations[activeConversationId]?.messages || []).map((msg: any) => ({
         role: msg.role,
         content: msg.content
       }));
@@ -151,7 +225,7 @@ export default function Chat() {
       // Add the new user message
       conversationHistory.push({ role: "user", content: currentMessage });
       
-      // Call the API
+      // Call the API with conversation_id for database storage
       const response = await fetch('https://axionlabs-api.a-contactnaol.workers.dev/v1/ai/chat/completions', {
         method: 'POST',
         headers: {
@@ -159,7 +233,8 @@ export default function Chat() {
         },
         body: JSON.stringify({
           messages: conversationHistory,
-          model: selectedModel
+          model: selectedModel,
+          conversation_id: activeConversationId
         }),
       });
       
@@ -167,19 +242,32 @@ export default function Chat() {
       
       if (result.success) {
         const aiResponse = {
-          id: Date.now() + 1,
+          id: result.data.conversation_id + '_' + Date.now(),
           role: "assistant",
           content: result.data.response,
           timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
         };
         
+        // Update local conversation with AI response
         setConversations(prev => ({
           ...prev,
           [activeConversationId]: {
             ...prev[activeConversationId],
-            messages: [...prev[activeConversationId].messages, aiResponse]
+            messages: [...(prev[activeConversationId]?.messages || []), aiResponse]
           }
         }));
+        
+        // Update conversation title if this is the first real message
+        if (conversations[activeConversationId]?.messages?.length <= 2) {
+          const title = currentMessage.slice(0, 50) + (currentMessage.length > 50 ? '...' : '');
+          setConversations(prev => ({
+            ...prev,
+            [activeConversationId]: {
+              ...prev[activeConversationId],
+              title
+            }
+          }));
+        }
       } else {
         throw new Error(result.error || 'Failed to get AI response');
       }
@@ -196,7 +284,7 @@ export default function Chat() {
         ...prev,
         [activeConversationId]: {
           ...prev[activeConversationId],
-          messages: [...prev[activeConversationId].messages, errorResponse]
+          messages: [...(prev[activeConversationId]?.messages || []), errorResponse]
         }
       }));
     } finally {
@@ -204,27 +292,71 @@ export default function Chat() {
     }
   };
 
-  const handleNewChat = () => {
-    const newId = Date.now().toString();
-    const newConversation = {
-      id: newId,
-      title: "New conversation",
-      messages: [
-        {
-          id: 1,
-          role: "assistant",
-          content: "Hello! I'm Gideon, your AI assistant powered by Cloudflare Workers AI. I'm now fully operational and ready to help you with anything you need. How can I assist you today?",
-          timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-        }
-      ],
-      createdAt: new Date().toISOString()
-    };
-    
-    setConversations(prev => ({
-      ...prev,
-      [newId]: newConversation
-    }));
-    setActiveConversationId(newId);
+  const handleNewChat = async () => {
+    try {
+      // Create new conversation via API
+      const response = await fetch('https://axionlabs-api.a-contactnaol.workers.dev/v1/conversations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: 'New Conversation',
+          model: selectedModel
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        const newConversation = {
+          ...result.data,
+          messages: [
+            {
+              id: 'welcome_' + Date.now(),
+              role: "assistant",
+              content: "Hello! I'm Gideon, your AI assistant powered by Cloudflare Workers AI. I'm now fully operational and ready to help you with anything you need. How can I assist you today?",
+              timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+            }
+          ]
+        };
+        
+        // Add to local state
+        setConversations(prev => ({
+          ...prev,
+          [result.data.id]: newConversation
+        }));
+        
+        // Update conversations list
+        setConversationsList(prev => [result.data, ...prev]);
+        
+        // Set as active conversation
+        setActiveConversationId(result.data.id);
+      }
+    } catch (error) {
+      console.error('Failed to create new conversation:', error);
+      // Fallback to local-only conversation
+      const newId = 'local_' + Date.now();
+      const newConversation = {
+        id: newId,
+        title: "New Conversation",
+        messages: [
+          {
+            id: 'welcome_' + Date.now(),
+            role: "assistant",
+            content: "Hello! I'm Gideon, your AI assistant. How can I help you today?",
+            timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+          }
+        ],
+        created_at: new Date().toISOString()
+      };
+      
+      setConversations(prev => ({
+        ...prev,
+        [newId]: newConversation
+      }));
+      setActiveConversationId(newId);
+    }
   };
 
   const handleSwitchConversation = (conversationId) => {
@@ -321,7 +453,17 @@ export default function Chat() {
         {/* Conversations List */}
         <ScrollArea className="flex-1 p-3">
           <div className="space-y-2">
-            {conversationsList.map((conv) => (
+            {isLoadingConversations ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white opacity-50"></div>
+              </div>
+            ) : conversationsList.length === 0 ? (
+              <div className="text-center py-8 text-gray-400">
+                <p className="text-sm">No conversations yet</p>
+                <p className="text-xs mt-1">Start a new chat to begin</p>
+              </div>
+            ) : (
+              conversationsList.map((conv) => (
               <div
                 key={conv.id}
                 onClick={() => handleSwitchConversation(conv.id)}
@@ -369,10 +511,11 @@ export default function Chat() {
                   {conv.messages[conv.messages.length - 1]?.content || "New conversation"}
                 </p>
                 <p className="text-caption" style={{ color: 'hsl(var(--color-foreground-subtle))' }}>
-                  {new Date(conv.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                  {new Date(conv.created_at || conv.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                 </p>
               </div>
-            ))}
+              ))
+            )}
           </div>
         </ScrollArea>
 
@@ -383,8 +526,8 @@ export default function Chat() {
               <User className="w-4 h-4 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-body-small font-medium">User</p>
-              <p className="text-caption">Free plan</p>
+              <p className="text-body-small font-medium">{user?.user_metadata?.full_name || user?.full_name || 'Demo User'}</p>
+              <p className="text-caption">Enterprise Plan</p>
             </div>
             <Settings className="w-4 h-4" style={{ color: 'hsl(var(--color-foreground-muted))' }} />
           </div>
