@@ -1,0 +1,48 @@
+name = "axionlabs-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[env.development]
+name = "axionlabs-api-dev"
+
+[env.staging]
+name = "axionlabs-api-staging"
+
+[env.production]
+name = "axionlabs-api-prod"
+route = "api.axionshosting.com/*"
+
+[env.production.vars]
+ENVIRONMENT = "production"
+CORS_ORIGIN = "*"
+JWT_SECRET = "prod-secret-change-immediately"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "axionlabs-main"
+database_id = "f758da6c-ce48-4b20-9521-e56b8a798f2a"
+
+[env.production.ai]
+binding = "AI"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "axionlabs-main"
+database_id = "f758da6c-ce48-4b20-9521-e56b8a798f2a"
+
+[ai]
+binding = "AI"
+
+# [[kv_namespaces]]
+# binding = "SESSIONS"
+# id = "your-kv-namespace-id"
+
+# [[r2_buckets]]
+# binding = "FILES"
+# bucket_name = "axionlabs-files"
+
+[vars]
+ENVIRONMENT = "development"
+CORS_ORIGIN = "*"
+JWT_SECRET = "dev-secret-change-in-production"
