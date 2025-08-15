@@ -30,7 +30,9 @@ export default function AccountUpdate() {
       toast.info('Please complete your email update');
     } else if (!isAuthenticated && !hash) {
       // Not authenticated and not in recovery mode, redirect to auth
-      navigate('/auth');
+      const currentUrl = window.location.href;
+      const redirectUrl = `https://user.axionshosting.com/auth/login?redirect=${encodeURIComponent(currentUrl)}&app=main`;
+      window.location.href = redirectUrl;
     } else if (user?.email) {
       // If we have the user email, set it
       setEmail(user.email);

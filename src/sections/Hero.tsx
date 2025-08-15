@@ -181,11 +181,15 @@ export default function Hero() {
                 </DropdownMenu>
               ) : (
                 <Button 
-                  asChild
                   size="sm"
                   className="bg-white hover:bg-white/90 text-black font-medium hover:scale-110 transition-all"
+                  onClick={() => {
+                    const currentUrl = window.location.href;
+                    const redirectUrl = `https://user.axionhosting.com/auth/login?redirect=${encodeURIComponent(currentUrl)}&app=main`;
+                    window.location.href = redirectUrl;
+                  }}
                 >
-                  <Link to="/auth">Sign In</Link>
+                  Sign In
                 </Button>
               )}
             </div>

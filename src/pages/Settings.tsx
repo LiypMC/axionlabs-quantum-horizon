@@ -20,7 +20,10 @@ const Settings = () => {
   }
 
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    const currentUrl = window.location.href;
+    const redirectUrl = `https://user.axionhosting.com/auth/login?redirect=${encodeURIComponent(currentUrl)}&app=main`;
+    window.location.href = redirectUrl;
+    return null;
   }
 
   return (

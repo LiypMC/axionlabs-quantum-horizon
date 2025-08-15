@@ -9,6 +9,13 @@ const NotFound = () => {
       "404 Error: User attempted to access non-existent route:",
       location.pathname
     );
+    
+    // If user tries to access /auth, redirect to cross-domain auth
+    if (location.pathname === '/auth' || location.pathname.startsWith('/auth/')) {
+      const currentUrl = window.location.href;
+      const redirectUrl = `https://user.axionshosting.com/auth/login?redirect=${encodeURIComponent(currentUrl.replace(location.pathname, '/'))}&app=main`;
+      window.location.href = redirectUrl;
+    }
   }, [location.pathname]);
 
   return (

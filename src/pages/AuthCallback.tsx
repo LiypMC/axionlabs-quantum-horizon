@@ -1,7 +1,6 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export default function AuthCallback() {
@@ -11,89 +10,73 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        console.log('Auth callback started, URL:', window.location.href);
+        console.log('Cross-domain auth callback started, URL:', window.location.href);
         
-        // Check for OAuth error first
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const error = hashParams.get('error');
-        const errorDescription = hashParams.get('error_description');
+        // Check for temp token from cross-domain auth
+        const urlParams = new URLSearchParams(window.location.search);
+        const tempToken = urlParams.get('token');
+        const returnTo = urlParams.get('return_to') || '/';
         
-        if (error) {
-          console.error('OAuth error in URL:', { error, errorDescription });
-          toast.error(`Authentication failed: ${errorDescription || error}`);
-          navigate('/auth');
-          return;
-        }
-        
-        // Get session from Supabase
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          console.error('Session error:', sessionError);
-          toast.error('Authentication failed. Please try again.');
-          navigate('/auth');
-          return;
-        }
-        
-        if (session && session.user) {
-          console.log('Authentication successful for user:', session.user.email);
-          
-          // Create or update user profile
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .maybeSingle();
-            
-          if (profileError) {
-            console.error('Profile fetch error:', profileError);
-          }
-          
-          if (!profile) {
-            // Create new profile
-            const { error: createError } = await supabase
-              .from('profiles')
-              .insert({
-                id: session.user.id,
-                full_name: session.user.user_metadata?.full_name || 
-                          session.user.user_metadata?.name || null,
-                avatar_url: session.user.user_metadata?.avatar_url || 
-                           session.user.user_metadata?.picture || null,
-                profile_completed: false,
-                updated_at: new Date().toISOString(),
-              });
-              
-            if (createError) {
-              console.error('Profile creation error:', createError);
-            }
-          }
+        if (tempToken) {
+          try {
+            // Exchange temp token with API
+            const response = await fetch('https://axionlabs-api.a-contactnaol.workers.dev/auth/cross-domain/callback', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                temp_token: tempToken,
+                target_domain: window.location.hostname,
+                return_url: returnTo,
+              }),
+            });
 
-          toast.success('Successfully signed in!');
-          
-          // Clear the URL hash
-          window.history.replaceState({}, document.title, window.location.pathname);
-          
-          // Navigate to home
-          setTimeout(() => {
-            navigate('/');
-          }, 500);
-          
+            const result = await response.json();
+            
+            if (result.success && result.data.access_token) {
+              // Store authentication token
+              localStorage.setItem('auth_token', result.data.access_token);
+              localStorage.setItem('user_data', JSON.stringify(result.data.user));
+              
+              toast.success('Successfully authenticated!');
+              
+              // Navigate to return URL or home
+              setTimeout(() => {
+                navigate(returnTo === window.location.href ? '/' : returnTo);
+              }, 500);
+            } else {
+              throw new Error(result.error || 'Authentication failed');
+            }
+          } catch (error) {
+            console.error('Cross-domain auth error:', error);
+            toast.error('Authentication failed. Please try again.');
+            const currentUrl = window.location.href;
+            const redirectUrl = `https://user.axionshosting.com/auth/login?redirect=${encodeURIComponent(currentUrl)}&app=main`;
+            window.location.href = redirectUrl;
+            return;
+          }
         } else {
-          console.log('No valid session found');
-          toast.error('Authentication failed. Please try again.');
-          navigate('/auth');
+          console.log('No temp token found, redirecting to auth');
+          toast.error('Invalid authentication callback.');
+          const currentUrl = window.location.href;
+          const redirectUrl = `https://user.axionshosting.com/auth/login?redirect=${encodeURIComponent(currentUrl)}&app=main`;
+          window.location.href = redirectUrl;
+          return;
         }
         
       } catch (error) {
         console.error('Unexpected error in auth callback:', error);
         toast.error('An unexpected error occurred. Please try again.');
-        navigate('/auth');
+        const currentUrl = window.location.href;
+        const redirectUrl = `https://user.axionshosting.com/auth/login?redirect=${encodeURIComponent(currentUrl)}&app=main`;
+        window.location.href = redirectUrl;
       } finally {
         setIsProcessing(false);
       }
     };
 
-    // Small delay to ensure Supabase has processed the OAuth callback
+    // Small delay to ensure URL params are available
     const timer = setTimeout(handleAuthCallback, 200);
     
     // Fallback timeout
