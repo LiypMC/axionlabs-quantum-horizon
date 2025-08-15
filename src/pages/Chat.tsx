@@ -85,7 +85,7 @@ export default function Chat() {
         {
           id: 1,
           role: "assistant",
-          content: "Hello! I'm Gideon, your AI assistant. How can I help you today?",
+          content: "Hello! I'm Gideon, your AI assistant powered by Cloudflare Workers AI. I'm now fully operational and ready to help you with anything you need. How can I assist you today?",
           timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
         }
       ],
@@ -117,7 +117,7 @@ export default function Chat() {
     }
   ];
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!message.trim()) return;
     
     const userMessage = {
@@ -137,15 +137,58 @@ export default function Chat() {
       }
     }));
     
+    const currentMessage = message;
     setMessage("");
     setIsTyping(true);
     
-    // Add AI response after delay
-    setTimeout(() => {
-      const aiResponse = {
+    try {
+      // Get conversation history for context
+      const conversationHistory = conversations[activeConversationId].messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+      
+      // Add the new user message
+      conversationHistory.push({ role: "user", content: currentMessage });
+      
+      // Call the API
+      const response = await fetch('https://axionlabs-api.a-contactnaol.workers.dev/v1/ai/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: conversationHistory,
+          model: selectedModel
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        const aiResponse = {
+          id: Date.now() + 1,
+          role: "assistant",
+          content: result.data.response,
+          timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+        };
+        
+        setConversations(prev => ({
+          ...prev,
+          [activeConversationId]: {
+            ...prev[activeConversationId],
+            messages: [...prev[activeConversationId].messages, aiResponse]
+          }
+        }));
+      } else {
+        throw new Error(result.error || 'Failed to get AI response');
+      }
+    } catch (error) {
+      console.error('Chat API error:', error);
+      const errorResponse = {
         id: Date.now() + 1,
-        role: "assistant", 
-        content: "Thank you for your message! I'm currently in development and will be available soon. All of Gideon's capabilities are coming soon.",
+        role: "assistant",
+        content: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
         timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
       };
       
@@ -153,11 +196,12 @@ export default function Chat() {
         ...prev,
         [activeConversationId]: {
           ...prev[activeConversationId],
-          messages: [...prev[activeConversationId].messages, aiResponse]
+          messages: [...prev[activeConversationId].messages, errorResponse]
         }
       }));
+    } finally {
       setIsTyping(false);
-    }, 1200);
+    }
   };
 
   const handleNewChat = () => {
@@ -169,7 +213,7 @@ export default function Chat() {
         {
           id: 1,
           role: "assistant",
-          content: "Hello! I'm Gideon, your AI assistant. How can I help you today?",
+          content: "Hello! I'm Gideon, your AI assistant powered by Cloudflare Workers AI. I'm now fully operational and ready to help you with anything you need. How can I assist you today?",
           timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
         }
       ],
@@ -494,9 +538,9 @@ export default function Chat() {
             
             <div className="mt-4 flex items-center justify-center">
               <p className="text-caption">
-                Gideon can make mistakes. Features are currently in development.
-                <span className="ml-2 px-2 py-1 status-warning rounded-full text-caption">
-                  Coming soon
+                Gideon can make mistakes. Please verify important information.
+                <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded-full text-caption">
+                  Powered by AI
                 </span>
               </p>
             </div>

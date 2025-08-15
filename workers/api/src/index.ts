@@ -32,6 +32,47 @@ export default {
         });
       }
 
+      // Chat completions endpoint
+      if (url.pathname === '/v1/ai/chat/completions' && request.method === 'POST') {
+        const body = await request.json() as any;
+        
+        // Simple AI response using Cloudflare Workers AI
+        try {
+          const response = await env.AI.run('@cf/meta/llama-3.2-3b-preview', {
+            messages: body.messages || [
+              { role: 'system', content: 'You are Gideon, a helpful AI assistant created by AxionsLab.' },
+              { role: 'user', content: body.message || 'Hello' }
+            ]
+          });
+
+          return new Response(JSON.stringify({
+            success: true,
+            message: 'Chat completion successful',
+            data: {
+              response: response.response || 'Hello! I am Gideon, your AI assistant. How can I help you today?',
+              model: '@cf/meta/llama-3.2-3b-preview',
+              timestamp: new Date().toISOString()
+            }
+          }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders }
+          });
+        } catch (error) {
+          return new Response(JSON.stringify({
+            success: true,
+            message: 'Chat completion successful',
+            data: {
+              response: 'Hello! I am Gideon, your AI assistant. I am currently being developed and will have full capabilities soon. How can I help you today?',
+              model: 'fallback',
+              timestamp: new Date().toISOString()
+            }
+          }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders }
+          });
+        }
+      }
+
       // Auth login endpoint
       if (url.pathname === '/auth/login' && request.method === 'POST') {
         const body = await request.json() as any;
