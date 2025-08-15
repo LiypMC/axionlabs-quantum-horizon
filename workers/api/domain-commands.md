@@ -39,13 +39,13 @@ curl https://api.axionshosting.com/health
 ### Add Custom Domain to Pages Project
 ```bash
 # Add custom domain to the pages project
-wrangler pages domain add user.axionhosting.com --project-name axionlabs-auth-frontend
+wrangler pages domain add user.axionshosting.com --project-name axionlabs-auth-frontend
 ```
 
 ### DNS Configuration for Auth Frontend
 ```
 Type: CNAME  
-Name: user.axionhosting.com
+Name: user.axionshosting.com
 Value: axionlabs-auth-frontend.pages.dev
 TTL: Auto/300
 ```
@@ -59,12 +59,12 @@ TTL: Auto/300
    wrangler route add api.axionshosting.com/* axionlabs-api
    
    # For Auth Frontend (Pages)
-   wrangler pages domain add user.axionhosting.com --project-name axionlabs-auth-frontend
+   wrangler pages domain add user.axionshosting.com --project-name axionlabs-auth-frontend
    ```
 3. **Test endpoints**:
    ```bash
    curl https://api.axionshosting.com/health
-   curl https://user.axionhosting.com
+   curl https://user.axionshosting.com
    ```
 
 ## Environment Variables Update

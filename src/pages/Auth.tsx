@@ -14,7 +14,7 @@ const Auth = () => {
   React.useEffect(() => {
     if (!loading) {
       const currentUrl = window.location.href;
-      const redirectUrl = `https://user.axionhosting.com/auth/login?redirect=${encodeURIComponent(currentUrl)}&app=main`;
+      const redirectUrl = `https://user.axionshosting.com/auth/login?redirect=${encodeURIComponent(currentUrl)}&app=main`;
       window.location.href = redirectUrl;
     }
   }, [loading]);
